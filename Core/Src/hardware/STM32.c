@@ -3,6 +3,79 @@
 #include "settings.h"
 #include "util.h"
 #include "hardware/TFT_LCD_legacy.h"
+#include "stm32f0xx_hal.h"
+#include "stm32f0xx_hal_gpio.h"
+
+
+
+void init_pc0(void) {
+	// button 0
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	GPIO_InitTypeDef init_struct;
+	init_struct.Pin = GPIO_PIN_0;
+	init_struct.Mode = GPIO_MODE_INPUT;
+	init_struct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOC, &init_struct);
+}
+
+void init_pc1(void) {
+	// button 1
+	__HAL_RCC_GPIOC_CLK_ENABLE();
+	GPIO_InitTypeDef init_struct;
+	init_struct.Pin = GPIO_PIN_1;
+	init_struct.Mode = GPIO_MODE_INPUT;
+	init_struct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOC, &init_struct);
+
+}
+
+void init_pa8(void) {
+	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+}
+
+void init_pb13(void) {
+    RCC->AHBENR |= RCC_AHBENR_GPIOBEN; // enable clock
+    GPIOB->MODER &= ~GPIO_MODER_MODER13; // reset moder value
+    GPIOB->MODER |= 1 << (13 * 2); // set moder to output
+    GPIOB->PUPDR |= 2 << (13 * 2); // set internal pull-down resistor
+
+}
+
+void init_pc6(void) {
+    RCC->AHBENR |= RCC_AHBENR_GPIOCEN; // enable clock
+    GPIOC->MODER &= ~GPIO_MODER_MODER6; // reset moder value
+    GPIOC->MODER |= 1 << (6 * 2); // set moder to output
+    GPIOC->PUPDR |= 2 << (6 * 2); // set internal pull-down resistor
+}
+
+int poll_pc0(void) {
+    uint8_t val = (GPIOC->IDR & GPIO_IDR_0) >> 0;
+    return val;
+}
+
+int poll_pc1(void) {
+    uint8_t val = (GPIOC->IDR & GPIO_IDR_1) >> 1;
+    return val;
+}
+
+
+
+void set_pin(uint8_t val, GPIO_TypeDef *gpio_typedef, uint8_t pin_num) {
+    if (val == 1) {
+        gpio_typedef->BSRR |= 1 << pin_num;
+    } else if (val == 0) {
+        gpio_typedef->BSRR |= 1 << (pin_num + 16);
+    }
+}
+
+void set_pb13(uint8_t val) {
+	set_pin(val, GPIOB, 13);
+}
+
+void set_pc6(uint8_t val) {
+	set_pin(val, GPIOC, 6);
+}
+
 
 
 void init_i2c_p1(void) {
@@ -39,7 +112,6 @@ void init_i2c_p1(void) {
     I2C1->CR1 |= I2C_CR1_PE;    // Enable I2C1
 
 }
-
 
 void init_i2c_p2(void) {
         RCC->AHBENR |= RCC_AHBENR_GPIOBEN;

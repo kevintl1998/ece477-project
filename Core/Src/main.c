@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "releases/entry.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -91,20 +92,7 @@ int main(void)
   MX_DMA_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-
-#define ONE 22
-#define ZERO 8
-  // init data
-//  uint8_t led_buffer[24] = { 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0};
-  uint8_t led_buffer[24] = { ONE,ONE,ONE,ONE,ONE,ONE,ONE,ONE, ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO, ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO,ZERO };
-//  uint8_t led_buffer[24] = { 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0 };
-//  for(int i = 0; i < 24; i++) {
-//	  led_buffer[i] = led_buffer[i] << 6;
-//  }
-  HAL_DMA_Start(&hdma_tim3_ch4_up, (uint32_t)led_buffer, (uint32_t)&(TIM3->CCR1), 24);
-  HAL_TIM_Base_Start(&htim3);
-  HAL_TIM_OC_Start(&htim3, TIM_CHANNEL_1);
-  TIM3->DIER |= TIM_DIER_UDE; // enable continuous dma requests
+  entry();
   /* USER CODE END 2 */
 
   /* Infinite loop */

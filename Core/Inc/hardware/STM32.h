@@ -44,10 +44,12 @@ void set_pc6(uint8_t val);
 void set_pc7(uint8_t val);
 void set_pc8(uint8_t val);
 void set_pc9(uint8_t val);
+
 // timer functions
 
+void init_tim1(void);
 
-
+// led functions
 
 // I2C comm functions
 

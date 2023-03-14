@@ -31,6 +31,9 @@ void init_pc1(void) {
 
 void init_pa8(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	GPIOA->MODER &= ~GPIO_MODER_MODER8;
+	GPIOA->MODER |= GPIO_MODER_MODER8_1;
+	GPIOA->AFR[1] |= (2 << (0 * 4)); // af mode 2(b10), pin 8
 }
 
 void init_pb13(void) {
@@ -74,6 +77,26 @@ void set_pb13(uint8_t val) {
 
 void set_pc6(uint8_t val) {
 	set_pin(val, GPIOC, 6);
+}
+
+
+
+void init_tim1(void) {
+	RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
+
+	// init timer
+	TIM1->PSC = 48-1;     // Set prescaler to 48-1
+	TIM1->ARR = 20000-1;  // Set auto reload register to 20000-1
+
+	// init pwm
+	TIM1->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;   // Set PWM mode 1
+	TIM1->CCER |= TIM_CCER_CC1E;   // Enable capture/compare 1 output
+    TIM1->BDTR |= TIM_BDTR_MOE;
+	TIM1->CCR1 = 500;
+
+	// enable timer
+	TIM1->CR1 |= TIM_CR1_CEN;
+
 }
 
 

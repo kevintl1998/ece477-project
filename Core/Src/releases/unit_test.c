@@ -12,8 +12,9 @@ void test_scoreboard(void);
 void test_buttons(void);
 void test_solenoid(void);
 void test_servo(void);
-void test_i2c(void);
 void test_leds(void);
+void test_i2c(void);
+void test_audio(void);
 
 /*
  * Consider this the entry point when RELEASE_TYPE in main.c is set to UNIT_TEST
@@ -32,9 +33,10 @@ int unit_test(void) {
 //    	test_scoreboard();
 //    	test_buttons();
 //    	test_solenoid();
-    	test_servo();
+//    	test_servo();
+    	test_leds();
 //    	test_i2c();
-//    	test_leds();
+//    	test_audio();
     }
 
     return 0;
@@ -104,13 +106,26 @@ void test_solenoid(void) {
 }
 
 void test_servo(void) {
-	// servo: pa8
+	uint16_t vals[3] = { 500, 1500, 2500 };
+	int i = 0;
+
+	init_pa8();
+	init_tim1();
+
+	while(1) {
+		TIM1->CCR1 = vals[i++ % 3];
+		nano_wait(ONE_BILLION);
+	}
+}
+
+void test_leds(void) {
+
 }
 
 void test_i2c(void) {
 
 }
 
-void test_leds(void) {
+void test_audio(void) {
 
 }

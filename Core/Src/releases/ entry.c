@@ -1,4 +1,6 @@
+#include "releases/entry.h"
 #include "stm32f0xx.h"
+#include "stm32f091xc.h"
 
 #include "settings.h"
 
@@ -9,7 +11,7 @@
 
 int other(void);
 
-void entry(void) {
+int entry(void) {
 #if RELEASE_TYPE == RELEASE
     return release();
 #elif RELEASE_TYPE == DEBUG
@@ -21,8 +23,8 @@ void entry(void) {
 #endif
 
     for(;;);
-
 }
+
 
 int other(void) {
     // extra function because you never know when you might need it

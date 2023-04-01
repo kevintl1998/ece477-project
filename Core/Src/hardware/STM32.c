@@ -1,39 +1,60 @@
 #include "./hardware/STM32.h"
 #include "stm32f0xx.h"
+#include <stm32f091xc.h>
 #include "settings.h"
 #include "util.h"
 #include "hardware/TFT_LCD_legacy.h"
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx_hal_gpio.h"
+#include "stm32f0xx_ll_dma.h"
 
+GPIO_InitTypeDef pc0_init;
+GPIO_InitTypeDef pc1_init;
+GPIO_InitTypeDef pb4_init;
 
 
 void init_pc0(void) {
 	// button 0
 	__HAL_RCC_GPIOC_CLK_ENABLE();
-	GPIO_InitTypeDef init_struct;
-	init_struct.Pin = GPIO_PIN_0;
-	init_struct.Mode = GPIO_MODE_INPUT;
-	init_struct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(GPIOC, &init_struct);
+	pc0_init.Pin = GPIO_PIN_0;
+	pc0_init.Mode = GPIO_MODE_INPUT;
+	pc0_init.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOC, &pc0_init);
 }
 
 void init_pc1(void) {
 	// button 1
 	__HAL_RCC_GPIOC_CLK_ENABLE();
-	GPIO_InitTypeDef init_struct;
-	init_struct.Pin = GPIO_PIN_1;
-	init_struct.Mode = GPIO_MODE_INPUT;
-	init_struct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(GPIOC, &init_struct);
+	pc1_init.Pin = GPIO_PIN_1;
+	pc1_init.Mode = GPIO_MODE_INPUT;
+	pc1_init.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOC, &pc1_init);
 
+}
+
+void init_pb4(void) {
+	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+
+//	GPIOB->MODER |= 1 << (4 * 2);
+
+	GPIOB->MODER &= ~GPIO_MODER_MODER4;
+	GPIOB->MODER |= GPIO_MODER_MODER4_1;
+	GPIOB->AFR[0] |= (1 << (4 * 4)); // af mode: TIM3_CH1
+
+//	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+//	pb4_init.Pin = GPIO_PIN_6;
+//	pb4_init.Speed = GPIO_SPEED_FREQ_HIGH;
+//	pb4_init.Mode = GPIO_MODE_OUTPUT_PP;
+//	pb4_init.Pull = GPIO_NOPULL;
+//
+//	HAL_GPIO_Init(GPIOB, &pb4_init);
 }
 
 void init_pa8(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 	GPIOA->MODER &= ~GPIO_MODER_MODER8;
 	GPIOA->MODER |= GPIO_MODER_MODER8_1;
-	GPIOA->AFR[1] |= (2 << (0 * 4)); // af mode 2(b10), pin 8
+	GPIOA->AFR[1] |= (2 << (0 * 4)); // af mode: TIM1_CH1;
 }
 
 void init_pb13(void) {
@@ -99,6 +120,74 @@ void init_tim1(void) {
 
 }
 
+void init_tim3(uint32_t dma_srcAddr) {
+	// init tim3 pwm and dma for output on pb4
+
+//	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+//
+//	TIM3->PSC = 4800-1;
+//	TIM3->ARR = 15000-1;
+//
+//	TIM3->DIER |= TIM_DIER_UIE;
+//	TIM3->DIER |= TIM_DIER_UDE;
+//
+//	TIM3->CR1 |= TIM_CR1_CEN;
+//	NVIC_SetPriority(TIM3_IRQn, 0);
+//	NVIC_EnableIRQ(TIM3_IRQn);
+
+
+	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
+
+	TIM3->PSC = 1-1;
+	TIM3->ARR = 60-1;
+
+	TIM3->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;   // Set PWM mode 1
+	TIM3->CCER |= TIM_CCER_CC1E;   // Enable capture/compare 1 output
+	TIM3->BDTR |= TIM_BDTR_MOE;
+	TIM3->CCR1 = 0;
+
+//	TIM3->DIER |= TIM_DIER_UIE;
+	TIM3->DIER |= TIM_DIER_UDE;
+
+	// set tim3 dmr_dba to tim3_cr1 (default value)
+	// set tim3 dmr_dbl to 1 transfer (default value)
+
+	TIM3->CR1 |= TIM_CR1_CEN;
+	NVIC_SetPriority(TIM3_IRQn, 0);
+	NVIC_EnableIRQ(TIM3_IRQn);
+
+}
+
+extern uint16_t ws_io_buffer[];
+
+void init_dma1_ch3(uint32_t memAddr, uint16_t memAddrLen, uint32_t periphAddr) {
+	// init dma1 for use with tim1 ch1
+
+	RCC->AHBENR |= RCC_AHBENR_DMAEN;
+
+//	DMA1_Channel4->CCR |= DMA_CCR_MSIZE_0; // mem size = 16 bits
+//	DMA1_Channel4->CCR |= DMA_CCR_PSIZE_0; //periph size = 16 bits
+//	DMA1_Channel4->CCR |= DMA_CCR_MINC; // enable mem increment mode
+//	DMA1_Channel4->CCR |= DMA_CCR_CIRC; // enable circular mode (disable for sending data to LEDs)
+//	DMA1_Channel4->CCR |= DMA_CCR_DIR; // set direction to mem2periph
+//	DMA1_Channel4->CCR |= DMA_CCR_TCIE; // enable transfer complete interrupt
+//	DMA1_Channel4->CNDTR = memAddrLen;
+//	DMA1_Channel4->CPAR = periphAddr;
+//	DMA1_Channel4->CMAR = memAddr;
+//	NVIC_EnableIRQ(DMA1_Ch4_7_DMA2_Ch3_5_IRQn);
+
+	DMA1_Channel3->CCR |= DMA_CCR_MSIZE_0; // mem size = 16 bits
+	DMA1_Channel3->CCR |= DMA_CCR_PSIZE_0; //periph size = 16 bits
+	DMA1_Channel3->CCR |= DMA_CCR_MINC; // enable mem increment mode
+	DMA1_Channel3->CCR |= DMA_CCR_CIRC; // enable circular mode (disable for sending data to LEDs)
+	DMA1_Channel3->CCR |= DMA_CCR_DIR; // set direction to mem2periph
+	DMA1_Channel3->CCR |= DMA_CCR_TCIE; // enable transfer complete interrupt
+	DMA1_Channel3->CNDTR = memAddrLen;
+	DMA1_Channel3->CPAR = periphAddr;
+	DMA1_Channel3->CMAR = &ws_io_buffer;
+	NVIC_EnableIRQ(DMA1_Ch2_3_DMA2_Ch1_2_IRQn);
+
+}
 
 
 void init_i2c_p1(void) {

@@ -46,10 +46,11 @@ void set_pc8(uint8_t val);
 void set_pc9(uint8_t val);
 
 // timer functions
-
 void init_tim1(void);
+void init_tim3(uint32_t dma_srcAddr);
 
-// led functions
+// dma functions
+void init_dma1_ch3(uint32_t memAddr, uint16_t memAddrLen, uint32_t periphAddr);
 
 // I2C comm functions
 

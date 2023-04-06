@@ -6,13 +6,18 @@
 #include <stm32f0xx_hal_rcc.h>
 #include <stm32f0xx_hal_gpio.h>
 #include <string.h>
-#include "hardware/STM32.h"
 
+#include "hardware/ws2812b/WS2812B_led_queue.h"
+
+#include "hardware/STM32.h"
 #include "hardware/TFT_LCD_legacy.h"
 #include "hardware/TFT_LCD.h"
 
 // data currently being sent from dma to tim3->ccr1
 uint16_t ws_io_buffer[WS_BUFFER_SIZE] = {0};
+
+
+//WSLED_Queue ws_wait_queue;
 
 
 void write_ws_io_buffer(uint16_t* IObuffer, uint32_t index, uint8_t data) {

@@ -46,7 +46,7 @@ void DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler(void) {
 	if (DMA1->ISR | DMA_ISR_TCIF3) { // transfer complete on channel 3 (for tim3)
 		DMA1->IFCR |= DMA_IFCR_CTCIF3;
 		// used for updating WS2812 LEDs
-//		ws_update_buffer();
+		ws_update_buffer();
 	}
 }
 

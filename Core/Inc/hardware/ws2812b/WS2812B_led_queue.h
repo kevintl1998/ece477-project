@@ -17,7 +17,7 @@ typedef struct ColorData {
     uint32_t hold_cycles;
 } ColorData;
 
-typedef struct Queue {
+typedef struct WSLED_Queue {
     ColorData* arr;
     uint32_t size;
     uint32_t max_size;
@@ -25,26 +25,26 @@ typedef struct Queue {
     uint32_t tail;
 } Queue;
 
-void WSLED_QueueInit(Queue* q, ColorData* arr, uint32_t max_size);
+void WSLED_QueueInit(WSLED_Queue* q, ColorData* arr, uint32_t max_size);
 
-ColorData* WSLED_QueueNextColor(Queue* q);
+ColorData* WSLED_QueueNextColor(WSLED_Queue* q);
 
 
 // adds item to queue
 // return QUEUE_SUCCESS if successful, else return QUEUE_FAIL
 // NOTE: adding a color to the wait queue with a hold_cycle < 1 will cause it to be skipped
-int WSLED_QueueAdd(Queue* q, uint8_t r, uint8_t g, uint8_t b, uint32_t hold_cycles);
+int WSLED_QueueAdd(WSLED_Queue* q, uint8_t r, uint8_t g, uint8_t b, uint32_t hold_cycles);
 
 // return 1 if queue is empty, else return
-int WSLED_QueueEmpty(Queue* q);
+int WSLED_QueueEmpty(WSLED_Queue* q);
 
 // return 1 if queue is full, else return 0
-int WSLED_QueueFull(Queue* q);
+int WSLED_QueueFull(WSLED_Queue* q);
 
 // pops the next item in the queue and returns it
 // if the queue is empty, returns (void*)0x0
-ColorData* WSLED_QueuePop(Queue* q);
+ColorData* WSLED_QueuePop(WSLED_Queue* q);
 
-ColorData* WSLED_QueuePeek(Queue* q);
+ColorData* WSLED_QueuePeek(WSLED_Queue* q);
 
 #endif

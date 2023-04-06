@@ -1,7 +1,7 @@
 #include "hardware/ws2812b/WS2812B_led_queue.h"
 
 
-void WSLED_QueueInit(Queue* q, ColorData* arr, uint32_t max_size) {
+void WSLED_QueueInit(WSLED_Queue* q, ColorData* arr, uint32_t max_size) {
     q->arr = arr;
     q->max_size = max_size;
     q->size = 0;
@@ -9,7 +9,7 @@ void WSLED_QueueInit(Queue* q, ColorData* arr, uint32_t max_size) {
     q->tail = 0;
 }
 
-ColorData* WSLED_QueueNextColor(Queue* q) {
+ColorData* WSLED_QueueNextColor(WSLED_Queue* q) {
     // keeps decrementing hold_cycles until it has reached 0
     // then pop that color off of the queue
     ColorData* d = WSLED_QueuePeek(q);
@@ -29,8 +29,8 @@ ColorData* WSLED_QueueNextColor(Queue* q) {
 //    }
 }
 
-int WSLED_QueueAdd(Queue* q, uint8_t r, uint8_t g, uint8_t b, uint32_t hold_cycles) {
-    if(WaitQueueFull(q)) {
+int WSLED_QueueAdd(WSLED_Queue* q, uint8_t r, uint8_t g, uint8_t b, uint32_t hold_cycles) {
+    if(WSLED_WaitQueueFull(q)) {
         return QUEUE_FAIL;
     }
     q->size++;
@@ -43,15 +43,15 @@ int WSLED_QueueAdd(Queue* q, uint8_t r, uint8_t g, uint8_t b, uint32_t hold_cycl
     return QUEUE_SUCCESS;
 }
 
-int WSLED_QueueEmpty(Queue* q) {
+int WSLED_QueueEmpty(WSLED_Queue* q) {
     return q->size == 0;
 }
 
-int WSLED_QueueFull(Queue* q) {
+int WSLED_QueueFull(WSLED_Queue* q) {
     return q->size == q->max_size;
 }
 
-ColorData* WSLED_QueuePop(Queue* q) {
+ColorData* WSLED_QueuePop(WSLED_Queue* q) {
     if(WSLED_QueueEmpty(q)) {
         return QUEUE_NULL;
     }
@@ -61,7 +61,7 @@ ColorData* WSLED_QueuePop(Queue* q) {
     return item;
 }
 
-ColorData* WSLED_QueuePeek(Queue* q) {
+ColorData* WSLED_QueuePeek(WSLED_Queue* q) {
 //    return WaitQueueEmpty(q) ? QUEUE_NULL : &(q->arr[q->tail]);
     if(WSLED_QueueEmpty(q)) {
         return QUEUE_NULL;

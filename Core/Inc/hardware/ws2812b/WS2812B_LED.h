@@ -12,7 +12,7 @@
 // # of bits needed to represent a single ws2812 led
 #define LED_DATA_SIZE 24
 // # of leds in series
-#define WS_LED_COUNT 2
+#define WS_LED_COUNT 1
 
 // buffer size to contain all the bits currently being sent to the LEDs
 #define WS_BUFFER_SIZE ((LED_DATA_SIZE + RESET_SIZE) * WS_LED_COUNT)

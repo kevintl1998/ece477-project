@@ -23,7 +23,7 @@ typedef struct WSLED_Queue {
     uint32_t max_size;
     uint32_t head;
     uint32_t tail;
-} Queue;
+} WSLED_Queue;
 
 void WSLED_QueueInit(WSLED_Queue* q, ColorData* arr, uint32_t max_size);
 

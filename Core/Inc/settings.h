@@ -1,13 +1,16 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+// ENABLE DEBUGGING
+#define DEBUG_MODE 0
+
 /*
  * SPECIFY THE RELEASE TYPE
  */
-#define RELEASE 0       // ./releases/release.c
-#define DEBUG 1         // ./releases/debug.c
-#define UNIT_TEST 2     // ./releases/unit_test.c
-#define OTHER 3         // For misc purposes
+#define RELEASE 0       // located in ./releases/release.c
+#define DEBUG 1         // located in ./releases/debug.c
+#define UNIT_TEST 2     // located in ./releases/unit_test.c
+#define OTHER 3         // For misc purposes. located in ./releases/entry.c
 
 #define RELEASE_TYPE UNIT_TEST
 

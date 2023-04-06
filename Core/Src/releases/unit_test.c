@@ -7,7 +7,7 @@
 #include "hardware/TFT_LCD.h"
 #include "hardware/TFT_LCD_legacy.h"
 #include "hardware/STM32.h"
-#include "hardware/WS2812B_LED.h"
+#include "hardware/ws2812b/WS2812B_LED.h"
 #include "util.h"
 #include "settings.h"
 
@@ -144,18 +144,15 @@ void test_leds(void) {
 	uint8_t r2 = 255;
 	uint8_t r3 = 255;
 	while(1) {
-		nano_wait(ONE_MILLION);
+		nano_wait(ONE_THOUSAND * 100);
 
 		set_ws_led_io_buffer(ws_io_buffer, 0, r, g, b);
 		set_ws_led_io_buffer(ws_io_buffer, 1, r1, r2, r3);
 
 
 		display_buff();
-		r += 1; g += 2; b += 3;
-		r1 -= 1; r2 -= 2; r3 -= 3;
-		if(test++ == 0) {
-
-		}
+		r += 25; g += 30; b += 35;
+		r1 -= 20; r2 -= 15; r3 -= 10;
 	}
 }
 

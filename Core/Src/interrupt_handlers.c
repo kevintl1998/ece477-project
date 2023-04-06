@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "stm32f091xc.h"
 #include "hardware/STM32.h"
-#include "hardware/WS2812B_LED.h"
+#include "hardware/ws2812b/WS2812B_LED.h"
 
 // timer 14 interrupt handler code
 /*

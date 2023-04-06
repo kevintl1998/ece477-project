@@ -11,26 +11,17 @@
 #include "hardware/TFT_LCD_legacy.h"
 #include "hardware/TFT_LCD.h"
 
-// storage for all the queue elements
-WS_RgbData ws_queue_elements[WS_LED_COUNT * WS_QUEUE_SIZE];
-
-// for a single led an example array is:
-// ws_io_queue[WS_LED_COUNT + 60]
-// basically add 60 uint16s at the end of each LED array. Take into account this offset when
-
-
-// queue for data to be sent to the ws_io_buffer
-WS_LED_QueueStruct ws_io_queue[WS_LED_COUNT];
-
 // data currently being sent from dma to tim3->ccr1
-uint16_t ws_io_buffer[WS_BUFFER_SIZE];
+uint16_t ws_io_buffer[WS_BUFFER_SIZE] = {0};
+
 
 /////////////////////////////////////////////////
 // temp buffer for testing
-uint16_t ws_io_buffer_tmp[WS_BUFFER_SIZE + 60] = {0};
+// storage for all the queue elements
+//WS_RgbData ws_queue_elements[WS_LED_COUNT * WS_QUEUE_SIZE];
 
-// keeps track of the reset state of each led
-uint8_t ws_reset_state[WS_LED_COUNT] = {0};
+// queue for data to be sent to the ws_io_buffer
+//WS_LED_QueueStruct ws_io_queue[WS_LED_COUNT];
 
 
 /* * * * * * * * * * *
@@ -38,7 +29,7 @@ uint8_t ws_reset_state[WS_LED_COUNT] = {0};
  * * * * * * * * * * */
 
 // functions for handling the led queue
-
+/*
 int is_ws_queue_empty(int led_num) {
 	WS_LED_QueueStruct q = ws_io_queue[led_num];
 	return q.size == 0;
@@ -89,20 +80,35 @@ void init_ws_led_queue() {
 	}
 }
 
+int ws_insert_queue(int led_num, uint8_t r, uint8_t g, uint8_t b) {
+	// insert the color sequence into the selected led's queue
+	WS_LED_QueueStruct* q = &ws_io_queue[led_num];
+	if(q->size + 3 > q->max_size) { // if queue doesn't have 3 open slots
+		return -1; // failed to write to queue
+	}
+	add_to_ws_queue(led_num, r, g, b);
+	return 0;
+}
+
+
+*/
 
 void write_ws_io_buffer(uint16_t* IObuffer, uint32_t index, uint8_t data) {
 	// index: items in buffer are grouped in groups of 8 (8 bits to represent values from 0 to 255)
+	// 3 items are used to represent each LED
+	// after every 3 items in the buffer there are 60 0s for the reset signal
 	// so IObuffer[index * 8] is the start of the index'th buffer
 	for(int i = 0; i < 8; i++) {
 		// (1 << ((8-1) - i)): get the ith bit from the end of the data
 		IObuffer[(index * 8) + i] = data & (1 << ((8-1) - i)) ? LOGIC1 : LOGIC0;
+
+//		IObuffer[(index * 8) + ((uint32_t)(index / 8) * RESET_SIZE) + i] = data & (1 << ((8-1) - i)) ? LOGIC1 : LOGIC0;
 	}
 }
 
 void clear_ws_io_buffer(uint16_t* IObuffer, uint32_t index) {
 	// index: items in buffer are grouped in groups of 8 (8 bits to represent values from 0 to 255)
 	// so IObuffer[index * 8] is the start of the index'th buffer
-
 	// clears the buffer for led reset
 	for(int i = 0; i < 8; i++) {
 		IObuffer[(index * 8) + i] = 0;
@@ -134,7 +140,6 @@ void init_ws2812b_leds() {
 	init_pb4();
 	init_tim3((uint32_t)&ws_io_buffer);
 	init_dma1_ch3((uint32_t)&ws_io_buffer, WS_BUFFER_SIZE, (uint32_t)&TIM3->CCR1);
-//	init_dma1_ch3((uint32_t)&ws_io_buffer_tmp, WS_BUFFER_SIZE + 60, (uint32_t)&TIM3->CCR1);
 
 	ws_enable_led_update();
 }
@@ -147,47 +152,15 @@ void ws_update_buffer() {
 	// For each led: If the queue is empty and not being reset, don't touch the buffer value. Else, update it
 
 	// for each led:
-	// check if being updated
+	// check if it should be updated
 	// check queue length
 	// if queue.size > 0 get next in queue
 	// update buffer
 	// else do nothing
 	for (int i = 0; i < WS_LED_COUNT; i++) {
-		// if being updated
-		if(ws_reset_state[i] > 0) { // led is currently being reset
-			ws_reset_state[i]--;
-			clear_ws_led_io_buffer(ws_io_buffer, 1);
-			continue;
-		}
-		if (is_ws_queue_empty(i)) {
-			continue;
-		}
-		WS_RgbData* d = pop_from_ws_queue(i);
-		set_ws_led_io_buffer(ws_io_buffer, i, d->r, d->g, d->b); // b
 
 	}
 
-
-	// gotta retry this function
-
-	// implement ping pong buffering:
-
-
-}
-
-
-int ws_insert_queue(int led_num, uint8_t r, uint8_t g, uint8_t b) {
-	// insert the color sequence into the selected led's queue
-	WS_LED_QueueStruct* q = &ws_io_queue[led_num];
-	if(q->size + 3 > q->max_size) { // if queue doesn't have 3 open slots
-		return -1; // failed to write to queue
-	}
-	add_to_ws_queue(led_num, r, g, b);
-	return 0;
-}
-
-void ws_reset_led(int led_num) {
-	ws_reset_state[led_num] = WS_RESET_LENGTH;
 }
 
 void ws_enable_led_update() {

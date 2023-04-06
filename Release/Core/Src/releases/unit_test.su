@@ -1,0 +1,10 @@
+../Core/Src/releases/unit_test.c:52:6:test_scoreboard	16	static
+../Core/Src/releases/unit_test.c:60:6:test_buttons	80	static
+../Core/Src/releases/unit_test.c:86:6:test_solenoid	48	static
+../Core/Src/releases/unit_test.c:121:6:test_servo	16	static
+../Core/Src/releases/unit_test.c:135:6:test_leds	24	static
+../Core/Src/releases/unit_test.c:200:6:test_i2c	0	static
+../Core/Src/releases/unit_test.c:205:6:test_switches	8	static
+../Core/Src/releases/unit_test.c:28:5:unit_test	8	static
+../Core/Src/releases/unit_test.c:230:6:test_audio	0	static
+../Core/Src/releases/unit_test.c:234:6:test_gpio_led	16	static

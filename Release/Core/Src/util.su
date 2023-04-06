@@ -1,0 +1,4 @@
+../Core/Src/util.c:6:6:nano_wait	0	static,ignoring_inline_asm
+../Core/Src/util.c:12:9:str_contains_char	8	static
+../Core/Src/util.c:16:5:abs	0	static
+../Core/Src/util.c:20:5:sign	0	static

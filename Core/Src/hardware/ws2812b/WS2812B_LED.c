@@ -7,7 +7,7 @@
 #include <stm32f0xx_hal_gpio.h>
 #include <string.h>
 
-#include "hardware/ws2812b/WS2812B_led_queue.h"
+
 
 #include "hardware/STM32.h"
 #include "hardware/TFT_LCD_legacy.h"
@@ -17,7 +17,8 @@
 uint16_t ws_io_buffer[WS_BUFFER_SIZE] = {0};
 
 
-//WSLED_Queue ws_wait_queue;
+WSLED_Queue ws_wait_queue[WS_BUFFER_SIZE];
+ColorData data_buffer[WS_BUFFER_SIZE][WS_QUEUE_LENGTH];
 
 
 void write_ws_io_buffer(uint16_t* IObuffer, uint32_t index, uint8_t data) {
@@ -39,52 +40,50 @@ void set_ws_led_io_buffer(uint16_t* IObuffer, uint32_t led_num, uint8_t r, uint8
 }
 
 void clear_ws_led_io_buffer(uint16_t* IObuffer, uint32_t led_num) {
-
-	clear_ws_io_buffer(IObuffer, (led_num * 3) + 0);
-	clear_ws_io_buffer(IObuffer, (led_num * 3) + 1);
-	clear_ws_io_buffer(IObuffer, (led_num * 3) + 2);
+	// change this to
+	write_ws_io_buffer(IObuffer, (led_num * 3) + 0, 0);
+	write_ws_io_buffer(IObuffer, (led_num * 3) + 1, 0);
+	write_ws_io_buffer(IObuffer, (led_num * 3) + 2, 0);
 }
 
 
 void init_ws2812b_leds() {
 
-	init_tft_lcd();
-	display_buff();
+	// init led queue
+	for(int i = 0; i < WS_LED_COUNT; i++) {
+		WSLED_QueueInit(&(ws_wait_queue[i]), data_buffer[i], WS_QUEUE_LENGTH);
+	}
 
-	set_ws_led_io_buffer(ws_io_buffer, 0, 0xFF, 0x00, 0xff);
+#ifdef DEBUG_MODE
+	// displays the buffer of the first led on the tft lcd screen
+		init_tft_lcd();
+		display_buff();
+#endif
 
+	// init hardware
 	init_pb4();
 	init_tim3((uint32_t)&ws_io_buffer);
 	init_dma1_ch3((uint32_t)&ws_io_buffer, WS_BUFFER_SIZE, (uint32_t)&TIM3->CCR1);
 
-	ws_enable_led_update();
+	// enable dma
+	enable_dma1_ch3();
 }
 
+int add_to_ws_queue(uint32_t led_num, uint8_t r, uint8_t g, uint8_t b, uint32_t hold_cycles) {
+	return WSLED_QueueAdd(&(ws_wait_queue[led_num]), r, g, b, hold_cycles);
+}
 
 void ws_update_buffer() {
 	// to be used by the dma transfer complete interrupt handler
 	// updates the buffer with the next value in the queue or sets the
 	// buffer to 0 if leds are currently being reset.
 	// For each led: If the queue is empty and not being reset, don't touch the buffer value. Else, update it
-
-	// for each led:
-	// check if it should be updated
-	// check queue length
-	// if queue.size > 0 get next in queue
-	// update buffer
-	// else do nothing
 	for (int i = 0; i < WS_LED_COUNT; i++) {
-
+		ColorData* d = WSLED_QueueNextColor(&(ws_wait_queue[i]));
+		if (d != QUEUE_NULL) {
+			set_ws_led_io_buffer(&(ws_io_buffer[i]), i, d->r, d->g, d->b);
+		}
 	}
-
-}
-
-void ws_enable_led_update() {
-	DMA1_Channel3->CCR |= DMA_CCR_EN;
-}
-void ws_disable_led_update() {
-	while(DMA1_Channel3->CNDTR); // wait for channel to finish any ongoing transfers
-	DMA1_Channel3->CCR &= ~DMA_CCR_EN;
 }
 
 void display_buff(void) {

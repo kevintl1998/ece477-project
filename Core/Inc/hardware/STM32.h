@@ -67,6 +67,8 @@ void init_tim3(uint32_t dma_srcAddr);
 
 // dma functions
 void init_dma1_ch3(uint32_t memAddr, uint16_t memAddrLen, uint32_t periphAddr);
+void enable_dma1_ch3();
+void disable_dma1_ch3();
 
 // I2C comm functions
 

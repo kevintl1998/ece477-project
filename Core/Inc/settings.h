@@ -2,7 +2,7 @@
 #define SETTINGS_H
 
 // ENABLE DEBUGGING
-#define DEBUG_MODE 0
+#define DEBUG_MODE 1
 
 /*
  * SPECIFY THE RELEASE TYPE

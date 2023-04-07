@@ -36,10 +36,6 @@ void TIM3_IRQHandler(void) {
 	} else if (TIM3->SR & TIM_SR_CC4IF) { // cc4 interrupt
 		TIM3->SR &= ~TIM_SR_CC4IF;
 	}
-
-
-
-
 }
 
 void DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler(void) {

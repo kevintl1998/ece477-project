@@ -331,6 +331,14 @@ void init_dma1_ch3(uint32_t memAddr, uint16_t memAddrLen, uint32_t periphAddr) {
 
 }
 
+void enable_dma1_ch3() {
+	DMA1_Channel3->CCR |= DMA_CCR_EN;
+}
+void disable_dma1_ch3() {
+	while(DMA1_Channel3->CNDTR); // wait for channel to finish any ongoing transfers
+	DMA1_Channel3->CCR &= ~DMA_CCR_EN;
+}
+
 
 void init_i2c_p1(void) {
     RCC->AHBENR |= RCC_AHBENR_GPIOBEN;

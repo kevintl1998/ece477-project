@@ -3,11 +3,14 @@
 #include "stm32f0xx.h"
 #include <stm32f091xc.h>
 
+
 #include "releases/unit_test.h"
 #include "hardware/TFT_LCD.h"
 #include "hardware/TFT_LCD_legacy.h"
 #include "hardware/STM32.h"
 #include "hardware/ws2812b/WS2812B_LED.h"
+#include "hardware/ws2812b/WS2812B_led_queue.h"
+
 #include "util.h"
 #include "settings.h"
 
@@ -137,22 +140,20 @@ void test_servo(void) {
 void test_leds(void) {
 	init_ws2812b_leds();
 	uint32_t test = 1;
-	uint8_t r = 0;
-	uint8_t g = 0;
-	uint8_t b = 0;
-	uint8_t r1 = 255;
-	uint8_t r2 = 255;
-	uint8_t r3 = 255;
+	uint8_t r = 56;
+	uint8_t g = 216;
+	uint8_t b = 99;
+
 	while(1) {
-		nano_wait(ONE_THOUSAND * 100);
+		nano_wait(ONE_BILLION);
 
-		set_ws_led_io_buffer(ws_io_buffer, 0, r, g, b);
-		set_ws_led_io_buffer(ws_io_buffer, 1, r1, r2, r3);
-
-
+		add_to_ws_queue(0, r, g, b, 500);
+		add_to_ws_queue(0, r + 54, g + 85, b + 99, 500);
+		add_to_ws_queue(1, r + 20, g, b + 211, 5000);
+		add_to_ws_queue(1, r + 89, g + 4, b, 10000);
 		display_buff();
 		r += 25; g += 30; b += 35;
-		r1 -= 20; r2 -= 15; r3 -= 10;
+//		r1 -= 20; r2 -= 15; r3 -= 10;
 	}
 }
 

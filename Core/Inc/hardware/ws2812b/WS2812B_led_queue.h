@@ -29,20 +29,15 @@ typedef struct WSLED_Queue {
 
 void WSLED_QueueInit(WSLED_Queue* q, ColorData* arr, uint32_t max_size);
 
+// This function is not atomic. This must be read by ONLY 1 interrupt or the main process
 ColorData* WSLED_QueueNextColor(WSLED_Queue* q);
 
 
 // adds item to queue
 // return QUEUE_SUCCESS if successful, else return QUEUE_FAIL
 // NOTE: adding a color to the wait queue with a hold_cycle < 1 will cause it to be skipped
+// This function is atomic meaning that it can be called from anywhere (any interrupt/the main process)
 int WSLED_QueueAdd(WSLED_Queue* q, uint8_t r, uint8_t g, uint8_t b, uint32_t hold_cycles);
 
-
-/*
-int WSLED_QueueEmpty(WSLED_Queue* q);
-int WSLED_QueueFull(WSLED_Queue* q);
-ColorData* WSLED_QueuePop(WSLED_Queue* q);
-ColorData* WSLED_QueuePeek(WSLED_Queue* q);
-*/
 
 #endif

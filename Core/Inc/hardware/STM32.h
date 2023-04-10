@@ -9,10 +9,17 @@
 void init_pb12(void);
 
 // button pins
-// uses internal pull up resistors
+// uses internal pull down resistors
 // high=open | low=closed
 void init_pc0(void);
 void init_pc1(void);
+
+//extra gpio pins
+void init_pc4(void); // will be used for the third button to help control the main menu
+void init_pa5(void);
+void init_pa6(void);
+void init_pa7(void);
+
 
 // solenoid pins
 void init_pb13(void);
@@ -45,6 +52,7 @@ void init_pc5(void);
 // pin poll/set functions
 int poll_pc0(void);
 int poll_pc1(void);
+int poll_pc4(void);
 
 int poll_pa0(void);
 int poll_pa1(void);

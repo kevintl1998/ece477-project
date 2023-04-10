@@ -42,7 +42,10 @@ int WSLED_QueueAdd(WSLED_Queue* q, uint8_t r, uint8_t g, uint8_t b, uint32_t hol
     	__enable_irq();
         return QUEUE_FAIL;
     }
-    ColorData* data = &(q->arr[q->head]);
+
+    ColorData* t = q->arr;
+    ColorData* data = &(t[q->head]);
+//    ColorData* data = &(q->arr[q->head]);
     q->head = (++q->head) % q->max_size;
     data->r = r;
     data->g = g;

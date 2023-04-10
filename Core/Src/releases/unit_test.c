@@ -3,7 +3,7 @@
 #include "stm32f0xx.h"
 #include <stm32f091xc.h>
 
-
+#include "interfacing/scoreboard.h"
 #include "releases/unit_test.h"
 #include "hardware/TFT_LCD.h"
 #include "hardware/TFT_LCD_legacy.h"
@@ -39,13 +39,14 @@ int unit_test(void) {
 // Run unit tests for all functions here
     if (DEVICE_ID == PLAYER1) {
         // test functions for p1
+    	test_scoreboard();
     } else if(DEVICE_ID == PLAYER2) {
         // test functions for p2
-//    	test_scoreboard();
+    	test_scoreboard();
 //    	test_buttons(); // if running on the pcb make sure pull down resistors are enabled.
 //    	test_solenoid();
 //    	test_servo();
-    	test_leds();
+//    	test_leds();
 //    	test_i2c();
 //    	test_switches();
 //    	test_audio();
@@ -54,11 +55,11 @@ int unit_test(void) {
     return 0;
 }
 
+
 void test_scoreboard(void) {
 	init_tft_lcd();
 
-	LCD_DrawRectangle(20, 20, 70, 90, GREEN);
-
+	start_menu_render();
 
 }
 
@@ -124,22 +125,47 @@ void test_solenoid(void) {
 }
 
 void test_servo(void) {
-	uint16_t vals[3] = { 500, 1500, 2500 };
-	int i = 0;
+	// positions are when looking at the servo top down with the wire coming out of the top
+	uint16_t continuous_clockwise = 500;
+	uint16_t up_left = 1000;
+	uint16_t left = 1500;
+	uint16_t down_left = 2000;
+	uint16_t down = 2500;
 
+	// init buttons
+	init_pc0();
+	init_pc1();
+	init_pc4();
+
+	// init screen
+	init_tft_lcd();
+
+	// init servo
 	init_pa8();
 	init_tim1();
 
+	char v_str[10];
 	while(1) {
-		TIM1->CCR1 = vals[i++ % 3];
-		nano_wait(ONE_BILLION);
+//		TIM1->CCR1 = vals[i++ % 3];
+
+		nano_wait(ONE_THOUSAND);
+		if(poll_pc0()) {
+			TIM1->CCR1 = 0;
+		} else if(poll_pc1()) {
+			TIM1->CCR1 = 2250;
+		} else if(poll_pc4()) {
+			TIM1->CCR1 = 1750;
+		}
+		int v = TIM1->CCR1;
+		itoa(v, v_str, 10);
+		LCD_DrawString(20, 40, BLACK, WHITE, v_str, 16, 0);
 	}
 }
 
 
 void test_leds(void) {
 	init_ws2812b_leds();
-	uint32_t test = 1;
+
 	uint8_t r = 56;
 	uint8_t g = 216;
 	uint8_t b = 99;
@@ -151,7 +177,9 @@ void test_leds(void) {
 		add_to_ws_queue(0, r + 54, g + 85, b + 99, 500);
 		add_to_ws_queue(1, r + 20, g, b + 211, 5000);
 		add_to_ws_queue(1, r + 89, g + 4, b, 10000);
+#ifdef DEBUG_MODE
 		display_buff();
+#endif
 		r += 25; g += 30; b += 35;
 //		r1 -= 20; r2 -= 15; r3 -= 10;
 	}

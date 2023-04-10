@@ -36,7 +36,7 @@ extern lcd_dev_t lcddev;
 // 1: rotate: 90
 // 2: rotate: 180
 // 3: rotate 270
-#define USE_HORIZONTAL       2
+#define USE_HORIZONTAL       1
 
 // The dimensions of the display.
 #define LCD_W 240
@@ -84,10 +84,7 @@ typedef struct {
     unsigned int   width;
     unsigned int   height;
     unsigned int   bytes_per_pixel; // 2:RGB16, 3:RGB, 4:RGBA
-    union {
     unsigned char  pixel_data[0]; // variable length array
-    unsigned short pix2[0];
-    };
 } Picture;
 
 void LCD_DrawPicture(int x0, int y0, const Picture *pic);

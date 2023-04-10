@@ -28,7 +28,7 @@ void init_pc0(void) {
 	__HAL_RCC_GPIOC_CLK_ENABLE();
 	pc0_init.Pin = GPIO_PIN_0;
 	pc0_init.Mode = GPIO_MODE_INPUT;
-	pc0_init.Pull = GPIO_NOPULL;
+//	pc0_init.Pull = GPIO_NOPULL;
 	pc0_init.Pull = GPIO_PULLDOWN;
 	HAL_GPIO_Init(GPIOC, &pc0_init);
 }
@@ -42,6 +42,27 @@ void init_pc1(void) {
 	pc1_init.Pull = GPIO_PULLDOWN;
 	HAL_GPIO_Init(GPIOC, &pc1_init);
 
+}
+
+// ==================================
+
+void init_pc4(void) { // used for third button
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+
+	GPIOC->MODER &= ~(3 << (4 * 2)); // input mode
+	GPIOC->PUPDR |= 2 << (4 * 2); // pull down resistor
+}
+
+void init_pa5(void) {
+	// currently unused
+}
+
+void init_pa6(void) {
+	// currently unused
+}
+
+void init_pa7(void) {
+	// currently unused
 }
 
 // ==================================
@@ -78,8 +99,8 @@ void init_pa8(void) {
 void init_pa0(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-    GPIOB->MODER |= ~(1 << (0 * 2)); // set moder to input
-    GPIOB->PUPDR |= ~(2 << (0 * 2)); // set internal pull-down resistor
+    GPIOB->MODER |= ~(3 << (0 * 2)); // set moder to input
+    GPIOB->PUPDR |= ~(3 << (0 * 2)); // set internal pull-down resistor
 }
 
 void init_pa1(void) {
@@ -100,7 +121,7 @@ void init_pa3(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
 	GPIOA->MODER |= ~(3 << (3 * 2)); // set moder to input
-	GPIOA->PUPDR |= ~(3 << (2 * 2)); // no pull-up/pull-down resistor
+	GPIOA->PUPDR |= ~(3 << (3 * 2)); // no pull-up/pull-down resistor
 }
 
 void init_pb0(void) {
@@ -179,16 +200,18 @@ void init_pb7(void) {
 
 // ==================================
 
+// buttons
 int poll_pc0(void) {
-    uint8_t val = (GPIOC->IDR & GPIO_IDR_0) >> 0;
-    return val;
+    return (GPIOC->IDR & GPIO_IDR_0) >> 0;
 }
-
 int poll_pc1(void) {
-    uint8_t val = (GPIOC->IDR & GPIO_IDR_1) >> 1;
-    return val;
+    return (GPIOC->IDR & GPIO_IDR_1) >> 1;
+}
+int poll_pc4(void) {
+	return (GPIOC->IDR & GPIO_IDR_4) >> 4;
 }
 
+// switches
 int poll_pa0(void) {
 	return (GPIOA->IDR & GPIO_IDR_0) >> 0;
 }
@@ -202,7 +225,7 @@ int poll_pa3(void) {
 	return (GPIOA->IDR & GPIO_IDR_3) >> 3;
 }
 int poll_pb0(void) {
-	return (GPIOB->IDR & GPIO_IDR_0) >> 3;
+	return (GPIOB->IDR & GPIO_IDR_0) >> 0;
 }
 int poll_pb1(void) {
 	return (GPIOB->IDR & GPIO_IDR_1) >> 1;

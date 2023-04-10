@@ -2,7 +2,7 @@
 #define SETTINGS_H
 
 // ENABLE DEBUGGING
-#define DEBUG_MODE 1
+#define DEBUG_MODE
 
 /*
  * SPECIFY THE RELEASE TYPE
@@ -20,7 +20,7 @@
 #define PLAYER1 0x02
 #define PLAYER2 0x03
 
-#define DEVICE_ID PLAYER2
+#define DEVICE_ID PLAYER1
 
 
 // i2c 7-bit address

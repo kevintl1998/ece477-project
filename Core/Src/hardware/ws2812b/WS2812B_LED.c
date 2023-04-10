@@ -1,4 +1,5 @@
 #include "hardware/ws2812b/WS2812B_LED.h"
+#include "settings.h"
 #include <stdio.h>
 #include <stm32f0xx.h>
 #include <stm32f091xc.h>
@@ -54,12 +55,14 @@ void init_ws2812b_leds() {
 		WSLED_QueueInit(&(ws_wait_queue[i]), data_buffer[i], WS_QUEUE_LENGTH);
 	}
 
+	set_ws_led_io_buffer(ws_io_buffer, 0, 0, 0, 0);
+
+
 #ifdef DEBUG_MODE
 	// displays the buffer of the first led on the tft lcd screen
 		init_tft_lcd();
 		display_buff();
 #endif
-
 	// init hardware
 	init_pb4();
 	init_tim3((uint32_t)&ws_io_buffer);
@@ -75,9 +78,7 @@ int add_to_ws_queue(uint32_t led_num, uint8_t r, uint8_t g, uint8_t b, uint32_t 
 
 void ws_update_buffer() {
 	// to be used by the dma transfer complete interrupt handler
-	// updates the buffer with the next value in the queue or sets the
-	// buffer to 0 if leds are currently being reset.
-	// For each led: If the queue is empty and not being reset, don't touch the buffer value. Else, update it
+	// updates the buffer with the next value in the queue
 	for (int i = 0; i < WS_LED_COUNT; i++) {
 		ColorData* d = WSLED_QueueNextColor(&(ws_wait_queue[i]));
 		if (d != QUEUE_NULL) {

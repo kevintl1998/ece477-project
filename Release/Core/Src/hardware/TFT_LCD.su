@@ -1,3 +1,0 @@
-../Core/Src/hardware/TFT_LCD.c:6:6:init_led_spi	0	static
-../Core/Src/hardware/TFT_LCD.c:29:6:init_lcd_spi	0	static
-../Core/Src/hardware/TFT_LCD.c:49:6:init_tft_lcd	8	static

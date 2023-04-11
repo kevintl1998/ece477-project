@@ -1,3 +1,4 @@
+#include <hardware/TFT_LCD_lib.h>
 #include "hardware/ws2812b/WS2812B_LED.h"
 #include "settings.h"
 #include <stdio.h>
@@ -11,8 +12,6 @@
 
 
 #include "hardware/STM32.h"
-#include "hardware/TFT_LCD_legacy.h"
-#include "hardware/TFT_LCD.h"
 
 // data currently being sent from dma to tim3->ccr1
 uint16_t ws_io_buffer[WS_BUFFER_SIZE] = {0};
@@ -47,7 +46,6 @@ void clear_ws_led_io_buffer(uint16_t* IObuffer, uint32_t led_num) {
 	write_ws_io_buffer(IObuffer, (led_num * 3) + 2, 0);
 }
 
-
 void init_ws2812b_leds() {
 
 	// init led queue
@@ -57,12 +55,6 @@ void init_ws2812b_leds() {
 
 	set_ws_led_io_buffer(ws_io_buffer, 0, 0, 0, 0);
 
-
-#ifdef DEBUG_MODE
-	// displays the buffer of the first led on the tft lcd screen
-		init_tft_lcd();
-		display_buff();
-#endif
 	// init hardware
 	init_pb4();
 	init_tim3((uint32_t)&ws_io_buffer);
@@ -88,6 +80,7 @@ void ws_update_buffer() {
 }
 
 void display_buff(void) {
+	// displays the buffer for the first led
 	char num_str[10];
 	for (int i = 0; i < 8; i++) {
 		itoa(ws_io_buffer[i], num_str, 10);

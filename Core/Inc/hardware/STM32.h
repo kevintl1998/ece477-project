@@ -95,4 +95,6 @@ void i2c_clearnack(void);
 int i2c_senddata(uint8_t devaddr, const void *data, uint8_t size);
 int i2c_recvdata(uint8_t devaddr, void *data, uint8_t size);
 
+void hard_reset(void);
+
 #endif

@@ -1,0 +1,4 @@
+../Core/Src/hardware/ws2812b/WS2812B_led_queue.c:11:6:WSLED_QueueInit	0	static
+../Core/Src/hardware/ws2812b/WS2812B_led_queue.c:39:5:WSLED_QueueAdd	32	static,ignoring_inline_asm
+../Core/Src/hardware/ws2812b/WS2812B_led_queue.c:61:12:WSLED_QueuePop	16	static
+../Core/Src/hardware/ws2812b/WS2812B_led_queue.c:20:12:WSLED_QueueNextColor	16	static

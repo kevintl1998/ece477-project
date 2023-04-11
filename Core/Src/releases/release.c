@@ -7,7 +7,9 @@
  */
 int release(void) {
 
-    // TODO: Create gameflow diagram
+	init_hardware();
+	init_game();
+	start_game();
 
 	return 1;
 }

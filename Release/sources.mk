@@ -33,6 +33,8 @@ CPP_DEPS :=
 SUBDIRS := \
 Core/Src \
 Core/Src/hardware \
+Core/Src/hardware/audio \
+Core/Src/hardware/ws2812b \
 Core/Src/interfacing \
 Core/Src/releases \
 Core/Startup \

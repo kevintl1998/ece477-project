@@ -1,12 +1,15 @@
-#include "./hardware/STM32.h"
+#include "hardware/STM32.h"
+
 #include "stm32f0xx.h"
-#include <stm32f091xc.h>
-#include "settings.h"
-#include "util.h"
-#include "hardware/TFT_LCD_legacy.h"
+#include "stm32f091xc.h"
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx_hal_gpio.h"
 #include "stm32f0xx_ll_dma.h"
+#include "core_cm0.h"
+
+#include "settings.h"
+#include "util.h"
+
 
 GPIO_InitTypeDef pc0_init;
 GPIO_InitTypeDef pc1_init;
@@ -538,3 +541,7 @@ int i2c_recvdata(uint8_t devaddr, void *data, uint8_t size) {
 }
 
 */
+
+void hard_reset(void) {
+	NVIC_SystemReset();
+}

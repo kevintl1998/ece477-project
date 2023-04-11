@@ -6,21 +6,15 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Core/Src/hardware/STM32.c \
-../Core/Src/hardware/TFT_LCD.c \
-../Core/Src/hardware/TFT_LCD_legacy.c \
-../Core/Src/hardware/WS2812B_LED.c 
+../Core/Src/hardware/TFT_LCD_legacy.c 
 
 C_DEPS += \
 ./Core/Src/hardware/STM32.d \
-./Core/Src/hardware/TFT_LCD.d \
-./Core/Src/hardware/TFT_LCD_legacy.d \
-./Core/Src/hardware/WS2812B_LED.d 
+./Core/Src/hardware/TFT_LCD_legacy.d 
 
 OBJS += \
 ./Core/Src/hardware/STM32.o \
-./Core/Src/hardware/TFT_LCD.o \
-./Core/Src/hardware/TFT_LCD_legacy.o \
-./Core/Src/hardware/WS2812B_LED.o 
+./Core/Src/hardware/TFT_LCD_legacy.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -30,7 +24,7 @@ Core/Src/hardware/%.o Core/Src/hardware/%.su: ../Core/Src/hardware/%.c Core/Src/
 clean: clean-Core-2f-Src-2f-hardware
 
 clean-Core-2f-Src-2f-hardware:
-	-$(RM) ./Core/Src/hardware/STM32.d ./Core/Src/hardware/STM32.o ./Core/Src/hardware/STM32.su ./Core/Src/hardware/TFT_LCD.d ./Core/Src/hardware/TFT_LCD.o ./Core/Src/hardware/TFT_LCD.su ./Core/Src/hardware/TFT_LCD_legacy.d ./Core/Src/hardware/TFT_LCD_legacy.o ./Core/Src/hardware/TFT_LCD_legacy.su ./Core/Src/hardware/WS2812B_LED.d ./Core/Src/hardware/WS2812B_LED.o ./Core/Src/hardware/WS2812B_LED.su
+	-$(RM) ./Core/Src/hardware/STM32.d ./Core/Src/hardware/STM32.o ./Core/Src/hardware/STM32.su ./Core/Src/hardware/TFT_LCD_legacy.d ./Core/Src/hardware/TFT_LCD_legacy.o ./Core/Src/hardware/TFT_LCD_legacy.su
 
 .PHONY: clean-Core-2f-Src-2f-hardware
 

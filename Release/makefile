@@ -13,6 +13,8 @@ RM := rm -rf
 -include Core/Startup/subdir.mk
 -include Core/Src/releases/subdir.mk
 -include Core/Src/interfacing/subdir.mk
+-include Core/Src/hardware/ws2812b/subdir.mk
+-include Core/Src/hardware/audio/subdir.mk
 -include Core/Src/hardware/subdir.mk
 -include Core/Src/subdir.mk
 -include objects.mk

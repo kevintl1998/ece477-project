@@ -16,7 +16,7 @@ void WSLED_QueueInit(WSLED_Queue* q, ColorData* arr, uint32_t max_size) {
     q->tail = 0;
 }
 
-// DOES NOT ENFORCE ATOMIC READ ACCESS TO THE LED QUEUE
+// DOES NOT ENFORCE ATOMIC ACCESS TO THE LED QUEUE
 ColorData* WSLED_QueueNextColor(WSLED_Queue* q) {
 	// does not need to be atomic because it will only be used by the dma transfer complete interrupt
     // keeps decrementing hold_cycles until it has reached 0

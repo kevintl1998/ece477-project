@@ -1,21 +1,23 @@
+#include "releases/unit_test.h"
+
 #include <stdlib.h>
 #include <stdint.h>
 #include "stm32f0xx.h"
 #include <stm32f091xc.h>
 
-#include "interfacing/scoreboard.h"
-#include "releases/unit_test.h"
-#include "hardware/TFT_LCD.h"
-#include "hardware/TFT_LCD_legacy.h"
+#include "hardware/TFT_LCD_lib.h"
 #include "hardware/STM32.h"
 #include "hardware/ws2812b/WS2812B_LED.h"
 #include "hardware/ws2812b/WS2812B_led_queue.h"
+#include "hardware/audio/midi.h"
+#include "hardware/audio/midiplay.h"
+
+#include "interfacing/scoreboard.h"
 
 #include "util.h"
 #include "settings.h"
 
-#include "hardware/audio/midi.h"
-#include "hardware/audio/midiplay.h"
+
 
 void test_scoreboard(void);
 void test_buttons(void);

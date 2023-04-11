@@ -1,5 +1,6 @@
-Core/Src/releases/unit_test.o: ../Core/Src/releases/unit_test.c \
- ../Core/Inc/releases/unit_test.h \
+Core/Src/hardware/ws2812b/WS2812B_led_queue.o: \
+ ../Core/Src/hardware/ws2812b/WS2812B_led_queue.c \
+ ../Core/Inc/hardware/ws2812b/WS2812B_led_queue.h \
  ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f0xx.h \
  ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f091xc.h \
  ../Drivers/CMSIS/Include/core_cm0.h \
@@ -24,15 +25,8 @@ Core/Src/releases/unit_test.o: ../Core/Src/releases/unit_test.c \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_i2c.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_i2c_ex.h \
  ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_pwr.h \
- ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_pwr_ex.h \
- ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f091xc.h \
- ../Core/Inc/hardware/TFT_LCD_lib.h ../Core/Inc/hardware/STM32.h \
- ../Core/Inc/hardware/ws2812b/WS2812B_LED.h \
- ../Core/Inc/hardware/ws2812b/WS2812B_led_queue.h \
- ../Core/Inc/hardware/audio/midi.h ../Core/Inc/hardware/audio/midiplay.h \
- ../Core/Inc/interfacing/scoreboard.h ../Core/Inc/interfacing/leds.h \
- ../Core/Inc/util.h ../Core/Inc/settings.h
-../Core/Inc/releases/unit_test.h:
+ ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_pwr_ex.h
+../Core/Inc/hardware/ws2812b/WS2812B_led_queue.h:
 ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f0xx.h:
 ../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f091xc.h:
 ../Drivers/CMSIS/Include/core_cm0.h:
@@ -58,14 +52,3 @@ Core/Src/releases/unit_test.o: ../Core/Src/releases/unit_test.c \
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_i2c_ex.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_pwr.h:
 ../Drivers/STM32F0xx_HAL_Driver/Inc/stm32f0xx_hal_pwr_ex.h:
-../Drivers/CMSIS/Device/ST/STM32F0xx/Include/stm32f091xc.h:
-../Core/Inc/hardware/TFT_LCD_lib.h:
-../Core/Inc/hardware/STM32.h:
-../Core/Inc/hardware/ws2812b/WS2812B_LED.h:
-../Core/Inc/hardware/ws2812b/WS2812B_led_queue.h:
-../Core/Inc/hardware/audio/midi.h:
-../Core/Inc/hardware/audio/midiplay.h:
-../Core/Inc/interfacing/scoreboard.h:
-../Core/Inc/interfacing/leds.h:
-../Core/Inc/util.h:
-../Core/Inc/settings.h:

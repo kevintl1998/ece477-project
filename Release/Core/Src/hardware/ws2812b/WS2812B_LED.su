@@ -1,0 +1,6 @@
+../Core/Src/hardware/ws2812b/WS2812B_LED.c:24:6:write_ws_io_buffer	20	static
+../Core/Src/hardware/ws2812b/WS2812B_LED.c:35:6:set_ws_led_io_buffer	24	static
+../Core/Src/hardware/ws2812b/WS2812B_LED.c:42:6:clear_ws_led_io_buffer	16	static
+../Core/Src/hardware/ws2812b/WS2812B_LED.c:49:5:add_to_ws_queue	16	static
+../Core/Src/hardware/ws2812b/WS2812B_LED.c:53:6:ws_update_buffer	16	static
+../Core/Src/hardware/ws2812b/WS2812B_LED.c:64:6:display_buff	56	static

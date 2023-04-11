@@ -934,39 +934,42 @@ void LCD_DrawString(u16 x,u16 y, u16 fc, u16 bg, const char *p, u8 size, u8 mode
 //===========================================================================
 void LCD_DrawPicture(int x0, int y0, const Picture *pic)
 {
-    int x1 = x0 + pic->width-1;
-    int y1 = y0 + pic->height-1;
-    if (x0 >= lcddev.width || y0 >= lcddev.height || x1 < 0 || y1 < 0)
-        return; // Completely outside of screen.  Nothing to do.
     lcddev.select(1);
-    int xs=0;
-    int ys=0;
-    int xe=pic->width;
-    int ye=pic->height;
-    if (x0 < 0) {
-        xs = -x0;
-        x0 = 0;
+    while((*p<='~')&&(*p>=' '))
+    {
+        if(x>(lcddev.width-1)||y>(lcddev.height-1))
+        return;
+        _LCD_DrawChar(x,y,fc,bg,*p,size,mode);
+        x+=size/2;
+        p++;
     }
-    if (y0 < 0) {
-        ys = -y0;
-        y0 = 0;
-    }
-    if (x1 >= lcddev.width) {
-        xe -= x1 - (lcddev.width - 1);
-        x1 = lcddev.width - 1;
-    }
-    if (y1 >= lcddev.height) {
-        ye -= y1 - (lcddev.height - 1);
-        y1 = lcddev.height - 1;
-    }
+    lcddev.select(0);
+}
 
+//===========================================================================
+// Draw a picture with upper left corner at (x0,y0).
+//===========================================================================
+void LCD_DrawPicture(u16 x0, u16 y0, const Picture *pic)
+{
+    lcddev.select(1);
+    u16 x1 = x0 + pic->width-1;
+    u16 y1 = y0 + pic->height-1;
+    // No error handling.  Just loop forever if out-of-bounds.
+    while (x0 >= lcddev.width)
+        ;
+    while (x1 >= lcddev.width)
+        ;
+    while (y0 >= lcddev.height)
+        ;
+    while (y1 >= lcddev.height)
+        ;
     LCD_SetWindow(x0,y0,x1,y1);
     LCD_WriteData16_Prepare();
 
     u16 *data = (u16 *)pic->pixel_data;
-    for(int y=ys; y<ye; y++) {
-        u16 *row = &data[y * pic->width + xs];
-        for(int x=xs; x<xe; x++)
+    for(int y=0; y<pic->height; y++) {
+        u16 *row = &data[y * pic->width];
+        for(int x=0; x<pic->width; x++)
             LCD_WriteData16(*row++);
     }
 

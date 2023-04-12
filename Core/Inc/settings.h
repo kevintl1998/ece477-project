@@ -2,7 +2,7 @@
 #define SETTINGS_H
 
 // UNCOMMENT TO ENABLE DEBUGGING
-//#define DEBUG_MODE
+#define DEBUG_MODE
 
 /*
  * SPECIFY THE RELEASE TYPE
@@ -12,7 +12,7 @@
 #define UNIT_TEST 2     // located in ./releases/unit_test.c
 #define OTHER 3         // For misc purposes. located in ./releases/entry.c
 
-#define RELEASE_TYPE UNIT_TEST
+#define RELEASE_TYPE RELEASE
 
 /*
  * SPECIFY THE DEVICE

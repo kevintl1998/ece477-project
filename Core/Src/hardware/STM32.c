@@ -1,7 +1,6 @@
 #include "hardware/STM32.h"
 
 #include "stm32f0xx.h"
-#include "stm32f091xc.h"
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx_hal_gpio.h"
 #include "stm32f0xx_ll_dma.h"
@@ -102,50 +101,56 @@ void init_pa8(void) {
 void init_pa0(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-    GPIOB->MODER |= ~(3 << (0 * 2)); // set moder to input
-    GPIOB->PUPDR |= ~(3 << (0 * 2)); // set internal pull-down resistor
+    GPIOA->MODER &= ~(3 << (0 * 2)); // set moder to input
+    GPIOA->PUPDR |= (2 << (0 * 2)); // set internal pull-down resistor
+//	GPIOA->MODER &= ~(GPIO_MODER_MODER0);
+//	GPIOA->PUPDR &= ~(GPIO_PUPDR_PUPDR0);
+//	GPIOA->PUPDR |= GPIO_PUPDR_PUPDR0_1;
 }
 
 void init_pa1(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-	GPIOA->MODER |= ~(3 << (1 * 2)); // set moder to input
-	GPIOA->PUPDR |= ~(3 << (1 * 2)); // no pull-up/pull-down resistor
+	GPIOA->MODER &= ~(3 << (1 * 2)); // set moder to input
+	GPIOA->PUPDR |= (2 << (1 * 2)); // set internal pull-down resistor
+//	GPIOA->MODER &= ~(GPIO_MODER_MODER1);
+//	GPIOA->PUPDR &= ~(GPIO_PUPDR_PUPDR1);
+//	GPIOA->PUPDR |= GPIO_PUPDR_PUPDR1_1;
 }
 
 void init_pa2(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-	GPIOA->MODER |= ~(3 << (2 * 2)); // set moder to input
-	GPIOA->PUPDR |= ~(3 << (2 * 2)); // no pull-up/pull-down resistor
+	GPIOA->MODER &= ~(3 << (2 * 2)); // set moder to input
+	GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
 }
 
 void init_pa3(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-	GPIOA->MODER |= ~(3 << (3 * 2)); // set moder to input
-	GPIOA->PUPDR |= ~(3 << (3 * 2)); // no pull-up/pull-down resistor
+	GPIOA->MODER &= ~(3 << (3 * 2)); // set moder to input
+	GPIOA->PUPDR |= (2 << (3 * 2)); // no pull-up/pull-down resistor
 }
 
 void init_pb0(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 
-	GPIOB->MODER |= ~(3 << (0 * 2)); // set moder to input
-	GPIOB->PUPDR |= ~(3 << (0 * 2)); // no pull-up/pull-down resistor
+	GPIOB->MODER &= ~(3 << (0 * 2)); // set moder to input
+	GPIOB->PUPDR |= (2 << (0 * 2)); // set internal pull-down resistor
 }
 
 void init_pb1(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 
-	GPIOB->MODER |= ~(3 << (1 * 2)); // set moder to input
-	GPIOB->PUPDR |= ~(3 << (1 * 2)); // no pull-up/pull-down resistor
+	GPIOB->MODER &= ~(3 << (1 * 2)); // set moder to input
+	GPIOB->PUPDR |= (2 << (1 * 2)); // set internal pull-down resistor
 }
 
 void init_pc5(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
 
-	GPIOC->MODER |= ~(3 << (5 * 2)); // set moder to input
-	GPIOC->PUPDR |= ~(3 << (5 * 2)); // no pull-up/pull-down resistor
+	GPIOC->MODER &= ~(3 << (5 * 2)); // set moder to input
+	GPIOC->PUPDR |= (2 << (5 * 2)); // set internal pull-down resistor
 }
 
 // ==================================
@@ -291,19 +296,6 @@ void init_tim1(void) {
 void init_tim3(uint32_t dma_srcAddr) {
 	// init tim3 pwm and dma for output on pb4
 
-//	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-//
-//	TIM3->PSC = 4800-1;
-//	TIM3->ARR = 15000-1;
-//
-//	TIM3->DIER |= TIM_DIER_UIE;
-//	TIM3->DIER |= TIM_DIER_UDE;
-//
-//	TIM3->CR1 |= TIM_CR1_CEN;
-//	NVIC_SetPriority(TIM3_IRQn, 0);
-//	NVIC_EnableIRQ(TIM3_IRQn);
-
-
 	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
 
 	TIM3->PSC = 1-1;
@@ -314,7 +306,6 @@ void init_tim3(uint32_t dma_srcAddr) {
 	TIM3->BDTR |= TIM_BDTR_MOE;
 	TIM3->CCR1 = 0;
 
-//	TIM3->DIER |= TIM_DIER_UIE;
 	TIM3->DIER |= TIM_DIER_UDE;
 
 	// set tim3 dmr_dba to tim3_cr1 (default value)
@@ -326,8 +317,44 @@ void init_tim3(uint32_t dma_srcAddr) {
 
 }
 
-extern uint16_t ws_io_buffer[];
+void init_tim14(void) {
+	RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
 
+	TIM14->PSC = 1000-1;
+	TIM14->ARR = 1000-1;
+
+	TIM14->DIER |= TIM_DIER_UIE;
+
+	TIM14->CR1 |= TIM_CR1_CEN;
+	NVIC_EnableIRQ(TIM14_IRQn);
+}
+
+void init_tim15(void) {
+	RCC->APB2ENR |= RCC_APB2ENR_TIM15EN;
+
+	// timer freq = stm clock freq (48MHz) / ((ARR + 1) * (PSC + 1))
+	// 48Mhz / (1000 * 500) = 96hz
+	TIM15->PSC = 1000-1;
+	TIM15->ARR = 500-1;
+
+	TIM15->DIER |= TIM_DIER_UIE;
+	TIM15->CR1 |= TIM_CR1_CEN;
+	NVIC_EnableIRQ(TIM15_IRQn);
+}
+
+void init_tim16(void) {
+	// for bit banging mcu comms
+}
+
+void enable_timer(TIM_TypeDef *timer) {
+	timer->CR1 |= TIM_CR1_CEN;
+}
+
+void disable_timer(TIM_TypeDef *timer) {
+	timer->CR1 &= ~TIM_CR1_CEN;
+}
+
+extern uint16_t ws_io_buffer[];
 void init_dma1_ch3(uint32_t memAddr, uint16_t memAddrLen, uint32_t periphAddr) {
 	// init dma1 for use with tim1 ch1
 

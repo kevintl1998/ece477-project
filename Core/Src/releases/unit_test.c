@@ -44,7 +44,7 @@ int unit_test(void) {
     	test_scoreboard();
     } else if(DEVICE_ID == PLAYER2) {
         // test functions for p2
-    	test_scoreboard();
+//    	test_scoreboard();
 //    	test_buttons(); // if running on the pcb make sure pull down resistors are enabled.
 //    	test_solenoid();
 //    	test_servo();
@@ -52,7 +52,7 @@ int unit_test(void) {
 //    	test_i2c();
 //    	test_switches();
 //    	test_audio();
-//    	test_gpio_led();
+    	test_gpio_led();
     }
     return 0;
 }

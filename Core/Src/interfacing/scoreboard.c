@@ -18,11 +18,12 @@ void init_tft_lcd() {
 void start_menu_render(void) {
 	LCD_DrawFillRectangle(0, 0, LCD_H, LCD_W, BLACK);
 	LCD_DrawPicture(0, 0, (const Picture*)&logo);
+	LCD_DrawPicture(10, 125, (const Picture*)&fancy_single);
+	LCD_DrawPicture(250, 125, (const Picture*)&fancy_multi);
+	LCD_DrawPicture(0, 200, (const Picture*)&bl_corner_sun);
 #if DEVICE_ID == PLAYER1
-	LCD_DrawString(10,150, BLACK, WHITE, "Single", 16, 0);
-	LCD_DrawString(270, 150, BLACK, WHITE, "Multi", 16, 0);
 
-	LCD_DrawPicture(20, 150 + 25, (const Picture*)&selector_arrow);
+	LCD_DrawPicture(20, 125 + 25, (const Picture*)&selector_arrow);
 
 #endif
 #if DEVICE_ID == PLAYER2
@@ -62,15 +63,15 @@ void start_menu_options_update() {
 void score_display_update(GameState* gs) {
 #if DEVICE_ID == PLAYER1
 	uint16_t multi_x = 20;
-	uint16_t multi_y = 150 + 25;
+	uint16_t multi_y = 125 + 25;
 	uint16_t single_x = 280;
-	uint16_t single_y = 150 + 25;
+	uint16_t single_y = 125 + 25;
 	if(gs->is_multiplayer) {
-		LCD_DrawFillRectangle(multi_x, multi_y, single_x + 20, single_y + 20, BLACK);
-		LCD_DrawPicture(280, 150 + 25, (const Picture*)&selector_arrow);
+		LCD_DrawFillRectangle(multi_x, multi_y, multi_x + 20, multi_y + 20, BLACK);
+		LCD_DrawPicture(280, 125 + 25, (const Picture*)&selector_arrow);
 	} else {
 		LCD_DrawFillRectangle(single_x, single_y, single_x + 20, single_y + 20, BLACK);
-		LCD_DrawPicture(20, 150 + 25, (const Picture*)&selector_arrow);
+		LCD_DrawPicture(20, 125 + 25, (const Picture*)&selector_arrow);
 
 	}
 #endif

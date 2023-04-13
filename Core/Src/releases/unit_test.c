@@ -51,8 +51,8 @@ int unit_test(void) {
 //    	test_leds();
 //    	test_i2c();
 //    	test_switches();
-//    	test_audio();
-    	test_gpio_led();
+    	test_audio();
+//    	test_gpio_led();
     }
     return 0;
 }

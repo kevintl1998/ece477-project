@@ -343,6 +343,17 @@ void init_tim15(void) {
 }
 
 void init_tim16(void) {
+	RCC->APB2ENR |= RCC_APB2ENR_TIM16EN;
+
+	TIM16->PSC = 1000-1;
+	TIM16->ARR = 500-1;
+
+	TIM16->DIER |= TIM_DIER_UIE;
+	TIM16->CR1 |= TIM_CR1_CEN;
+	NVIC_EnableIRQ(TIM16_IRQn);
+}
+
+void init_tim17(void) {
 	// for bit banging mcu comms
 }
 

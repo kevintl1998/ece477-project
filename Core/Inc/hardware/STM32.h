@@ -74,6 +74,7 @@ void init_tim3(uint32_t dma_srcAddr);
 void init_tim14(void);
 void init_tim15(void);
 void init_tim16(void);
+void init_tim17(void);
 
 void enable_timer(TIM_TypeDef *timer);
 void disable_timer(TIM_TypeDef *timer);

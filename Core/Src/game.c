@@ -32,6 +32,7 @@ void init_hardware(void) {
 
 	// leds
 	init_leds();
+	init_led_timer();
 
 	// audio
 
@@ -76,7 +77,7 @@ int run_game(void) {
 		if(left || right) {
 			gameState->is_multiplayer = gameState->is_multiplayer == 0 ? 1 : 0;
 			score_display_update(gameState);
-			nano_wait(ONE_MILLION * 200);
+			nano_wait(ONE_MILLION * 250);
 		} else if (select) {
 #ifdef DEBUG_MODE
 			if(gameState->is_multiplayer) {
@@ -88,7 +89,7 @@ int run_game(void) {
 			break;
 		}
 	}
-//	// choose ball count
+	 choose ball count
 	start_menu_options_render();
 
 

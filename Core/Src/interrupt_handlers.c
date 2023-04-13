@@ -53,6 +53,16 @@ void TIM15_IRQHandler(void) {
 }
 
 
+void TIM16_IRQHandler(void) {
+	TIM16->SR &= ~TIM_SR_UIF;
+
+	// set led queue here
+	// have var(s) in GameState for the led sequence(s) that
+	// should be displayed(set by the timer whos peripheral those leds are close to),
+	// then have this function decode them to display a specific led pattern
+
+}
+
 
 void TIM3_IRQHandler(void) {
 

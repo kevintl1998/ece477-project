@@ -4,8 +4,8 @@
 
 
 
-void init_left_paddle(void)  { init_pb13(); }
-void init_right_paddle(void) { init_pc6(); }
+void init_left_paddle(void)  { init_pb13(); } // solenoid 5
+void init_right_paddle(void) { init_pc6(); } // solenoid 4
 
 void init_obstacle1(void) 	 { init_pc7(); }
 void init_obstacle2(void) 	 { init_pc8(); }

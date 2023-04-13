@@ -102,7 +102,7 @@ void init_pa0(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
     GPIOA->MODER &= ~(3 << (0 * 2)); // set moder to input
-    GPIOA->PUPDR |= (2 << (0 * 2)); // set internal pull-down resistor
+    GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
 //	GPIOA->MODER &= ~(GPIO_MODER_MODER0);
 //	GPIOA->PUPDR &= ~(GPIO_PUPDR_PUPDR0);
 //	GPIOA->PUPDR |= GPIO_PUPDR_PUPDR0_1;
@@ -112,7 +112,7 @@ void init_pa1(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
 	GPIOA->MODER &= ~(3 << (1 * 2)); // set moder to input
-	GPIOA->PUPDR |= (2 << (1 * 2)); // set internal pull-down resistor
+	GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
 //	GPIOA->MODER &= ~(GPIO_MODER_MODER1);
 //	GPIOA->PUPDR &= ~(GPIO_PUPDR_PUPDR1);
 //	GPIOA->PUPDR |= GPIO_PUPDR_PUPDR1_1;

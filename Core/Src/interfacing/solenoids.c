@@ -44,7 +44,6 @@ void update_solenoid(void (*set_state)(uint8_t), uint8_t B_state, uint32_t* acti
 void update_left_flipper(GameState* gs, uint8_t LB_state) {
 	update_solenoid(set_pb13, LB_state, &gs->left_paddle_active, FLIPPER_MAX_ACTIVE_TIME);
 }
-
 void update_right_flipper(GameState* gs, uint8_t RB_state) {
 	update_solenoid(set_pc6, RB_state, &gs->right_paddle_active, FLIPPER_MAX_ACTIVE_TIME);
 }

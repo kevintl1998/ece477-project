@@ -89,7 +89,7 @@ int run_game(void) {
 			break;
 		}
 	}
-	 choose ball count
+//	 choose ball count
 	start_menu_options_render();
 
 

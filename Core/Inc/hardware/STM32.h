@@ -49,10 +49,14 @@ void init_pb1(void);
 void init_pc5(void);
 
 // pin poll/set functions
+
+// button poll functions
 int poll_pc0(void);
 int poll_pc1(void);
 int poll_pc4(void);
 
+// switch poll functions:
+// returns 1 if open, 0 if closed
 int poll_pa0(void);
 int poll_pa1(void);
 int poll_pa2(void);

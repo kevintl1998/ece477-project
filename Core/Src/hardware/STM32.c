@@ -102,55 +102,56 @@ void init_pa0(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
     GPIOA->MODER &= ~(3 << (0 * 2)); // set moder to input
-    GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
-//	GPIOA->MODER &= ~(GPIO_MODER_MODER0);
-//	GPIOA->PUPDR &= ~(GPIO_PUPDR_PUPDR0);
-//	GPIOA->PUPDR |= GPIO_PUPDR_PUPDR0_1;
+//    GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down
+    GPIOA->PUPDR &= ~(3 << (2 * 2)); // set no pull-up or pull-down
 }
 
 void init_pa1(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
 	GPIOA->MODER &= ~(3 << (1 * 2)); // set moder to input
-	GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
-//	GPIOA->MODER &= ~(GPIO_MODER_MODER1);
-//	GPIOA->PUPDR &= ~(GPIO_PUPDR_PUPDR1);
-//	GPIOA->PUPDR |= GPIO_PUPDR_PUPDR1_1;
+//	GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
+	GPIOA->PUPDR &= ~(3 << (2 * 2)); // set no pull-up or pull-down
 }
 
 void init_pa2(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
 	GPIOA->MODER &= ~(3 << (2 * 2)); // set moder to input
-	GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
+//	GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
+	GPIOA->PUPDR &= ~(3 << (2 * 2)); // set no pull-up or pull-down
 }
 
 void init_pa3(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
 	GPIOA->MODER &= ~(3 << (3 * 2)); // set moder to input
-	GPIOA->PUPDR |= (2 << (3 * 2)); // no pull-up/pull-down resistor
+//	GPIOA->PUPDR |= (2 << (3 * 2)); // no pull-up/pull-down resistor
+	GPIOA->PUPDR &= ~(3 << (3 * 2)); // set no pull-up or pull-down
 }
 
 void init_pb0(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 
 	GPIOB->MODER &= ~(3 << (0 * 2)); // set moder to input
-	GPIOB->PUPDR |= (2 << (0 * 2)); // set internal pull-down resistor
+//	GPIOB->PUPDR |= (2 << (0 * 2)); // set internal pull-down resistor
+	GPIOB->PUPDR &= ~(3 << (0 * 2)); // set no pull-up or pull-down
 }
 
 void init_pb1(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 
 	GPIOB->MODER &= ~(3 << (1 * 2)); // set moder to input
-	GPIOB->PUPDR |= (2 << (1 * 2)); // set internal pull-down resistor
+//	GPIOB->PUPDR |= (2 << (1 * 2)); // set internal pull-down resistor
+	GPIOB->PUPDR &= ~(3 << (1 * 2)); // set no pull-up or pull-down
 }
 
 void init_pc5(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
 
 	GPIOC->MODER &= ~(3 << (5 * 2)); // set moder to input
-	GPIOC->PUPDR |= (2 << (5 * 2)); // set internal pull-down resistor
+//	GPIOC->PUPDR |= (2 << (5 * 2)); // set internal pull-down resistor
+	GPIOC->PUPDR &= ~(3 << (5 * 2)); // set no pull-up or pull-down
 }
 
 // ==================================

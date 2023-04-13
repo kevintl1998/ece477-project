@@ -45,9 +45,9 @@ void TIM15_IRQHandler(void) {
 		update_right_flipper(gameState, poll_RB());
 
 		// update solenoids activated by switches
-		update_obstacle1(gameState, poll_switch1());
-		update_obstacle2(gameState, poll_switch2());
-		update_obstacle3(gameState, poll_switch3());
+		update_obstacle1(gameState, !poll_switch1());
+		update_obstacle2(gameState, !poll_switch2());
+		update_obstacle3(gameState, !poll_switch3());
 		// update score and ball count activated by switches
 	}
 }

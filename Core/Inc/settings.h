@@ -20,11 +20,11 @@
 #define PLAYER1 0x02
 #define PLAYER2 0x03
 
-#define DEVICE_ID PLAYER1
+#define DEVICE_ID PLAYER2
 
 
 // i2c 7-bit address
-#define P1_I2C_ADDRESS 0
-#define P2_I2C_ADDRESS 3
+//#define P1_I2C_ADDRESS 0
+//#define P2_I2C_ADDRESS 3
 
 #endif

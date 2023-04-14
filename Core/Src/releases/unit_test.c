@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "stm32f0xx.h"
 #include <stm32f091xc.h>
+#include "stm32f0xx_hal_uart.h"
 
 #include "hardware/TFT_LCD_lib.h"
 #include "hardware/STM32.h"
@@ -18,7 +19,7 @@
 #include "settings.h"
 
 
-
+void test_usart(void);
 void test_scoreboard(void);
 void test_buttons(void);
 void test_solenoid(void);
@@ -28,6 +29,7 @@ void test_i2c(void);
 void test_switches(void);
 void test_audio(void);
 void test_gpio_led(void);
+
 
 /*
  * Consider this the entry point when RELEASE_TYPE in main.c is set to UNIT_TEST
@@ -43,7 +45,8 @@ int unit_test(void) {
     if (DEVICE_ID == PLAYER1) {
         // test functions for p1
 //    	test_scoreboard();
-		test_servo();
+//		test_servo();
+    	test_usart();
     } else if(DEVICE_ID == PLAYER2) {
         // test functions for p2
 //    	test_scoreboard();
@@ -55,9 +58,54 @@ int unit_test(void) {
 //    	test_switches();
 //    	test_audio();
 //    	test_gpio_led();
+    	test_usart();
     }
     return 0;
 }
+
+
+extern UART_HandleTypeDef huart1;
+char bu[11];
+void test_usart(void) {
+	init_tft_lcd();
+	uint32_t timer = 0;
+	char tim_str[20];
+
+#if DEVICE_ID == PLAYER2
+	// for interrupt
+	bu[0] = '\0';
+	HAL_UART_Receive_IT(&huart1, (uint8_t*)bu, 1); // start uart receive data
+#endif
+
+//	LCD_DrawString(100, 100, BLACK, WHITE, "bonk", 16, 0);
+	char e[11] = "hello world";
+	while(1) {
+#if DEVICE_ID == PLAYER1
+//	HAL_UART_Transmit(&huart1, (uint8_t*)&(e[timer % 11]), 1, 100);
+	HAL_UART_Transmit(&huart1, (uint8_t*)e), 1, 100);
+#endif
+#if DEVICE_ID == PLAYER2
+//	HAL_UART_Receive(&huart1, (uint8_t*)bu, 12, 1000);
+	LCD_DrawString(20, 20, BLACK, WHITE, bu, 16, 0);
+#endif
+	itoa(timer, tim_str, 10);
+	LCD_DrawString(20, 50, BLACK, WHITE, tim_str, 16, 0);
+	timer++;
+	nano_wait(ONE_MILLION);
+	}
+}
+
+#if DEVICE_ID == PLAYER2
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) // triggers once uart has finished receiving data
+{
+//    HAL_UART_Transmit(&huart1, UART1_rxBuffer, 12, 100);
+	if(huart->Instance == huart1.Instance) {
+		__HAL_UART_CLEAR_OREFLAG(huart);
+		__HAL_UART_SEND_REQ(huart, UART_RXDATA_FLUSH_REQUEST);
+		HAL_UART_Receive_IT(&huart1, (uint8_t*)bu, 11); // start data receive again
+	}
+}
+#endif
 
 
 void test_scoreboard(void) {

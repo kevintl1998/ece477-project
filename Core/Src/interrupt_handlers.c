@@ -15,7 +15,8 @@
 // used to poll buttons and update their state
 void TIM14_IRQHandler(void) {
     TIM14->SR &= ~TIM_SR_UIF;
-
+    // timer 15 interrupt handler
+    // used to update the state of the solenoids and switches
     uint8_t left = 0;
     uint8_t right = 0;
     uint8_t select = 0;
@@ -30,8 +31,7 @@ void TIM14_IRQHandler(void) {
     gameState->select_button_pressed = select;
 }
 
-// timer 15 interrupt handler
-// used to update the state of the solenoids and switches
+
 void TIM15_IRQHandler(void) {
 	TIM15->SR &= ~TIM_SR_UIF;
 
@@ -60,6 +60,13 @@ void TIM16_IRQHandler(void) {
 	// have var(s) in GameState for the led sequence(s) that
 	// should be displayed(set by the timer whos peripheral those leds are close to),
 	// then have this function decode them to display a specific led pattern
+
+}
+
+
+void TIM17_IRQHandler(void) {
+	TIM17->SR &= ~TIM_SR_UIF;
+
 
 }
 

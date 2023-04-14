@@ -39,9 +39,11 @@ int unit_test(void) {
      */
 
 // Run unit tests for all functions here
+	test_i2c();
     if (DEVICE_ID == PLAYER1) {
         // test functions for p1
-    	test_scoreboard();
+//    	test_scoreboard();
+		test_servo();
     } else if(DEVICE_ID == PLAYER2) {
         // test functions for p2
 //    	test_scoreboard();
@@ -51,7 +53,7 @@ int unit_test(void) {
 //    	test_leds();
 //    	test_i2c();
 //    	test_switches();
-    	test_audio();
+//    	test_audio();
 //    	test_gpio_led();
     }
     return 0;
@@ -221,10 +223,17 @@ void test_leds(void) {
 //	NVIC_EnableIRQ(DMA1_Ch2_3_DMA2_Ch1_2_IRQn);
 //
 //}
-
 void test_i2c(void) {
-	// pb6: SCL
-	// pb7: SDA
+
+#if DEVICE_ID == PLAYER1
+	nano_wait(ONE_THOUSAND);
+
+#endif
+#if DEVICE_ID == PLAYER2
+
+
+#endif
+
 }
 
 void test_switches(void) {

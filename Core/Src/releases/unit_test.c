@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include "stm32f0xx.h"
 #include <stm32f091xc.h>
-#include "stm32f0xx_hal_uart.h"
+//#include "stm32f0xx_hal_uart.h"
+#include "stm32f0xx_ll_usart.h"
 
 #include "hardware/TFT_LCD_lib.h"
 #include "hardware/STM32.h"
@@ -41,12 +42,13 @@ int unit_test(void) {
      */
 
 // Run unit tests for all functions here
-	test_i2c();
+//	test_i2c();
     if (DEVICE_ID == PLAYER1) {
         // test functions for p1
 //    	test_scoreboard();
 //		test_servo();
-    	test_usart();
+    	test_leds();
+//    	test_usart();
     } else if(DEVICE_ID == PLAYER2) {
         // test functions for p2
 //    	test_scoreboard();
@@ -64,7 +66,6 @@ int unit_test(void) {
 }
 
 
-extern UART_HandleTypeDef huart1;
 char bu[11];
 void test_usart(void) {
 	init_tft_lcd();
@@ -74,7 +75,7 @@ void test_usart(void) {
 #if DEVICE_ID == PLAYER2
 	// for interrupt
 	bu[0] = '\0';
-	HAL_UART_Receive_IT(&huart1, (uint8_t*)bu, 1); // start uart receive data
+//	HAL_UART_Receive_IT(&huart1, (uint8_t*)bu, 1); // start uart receive data
 #endif
 
 //	LCD_DrawString(100, 100, BLACK, WHITE, "bonk", 16, 0);
@@ -82,30 +83,39 @@ void test_usart(void) {
 	while(1) {
 #if DEVICE_ID == PLAYER1
 //	HAL_UART_Transmit(&huart1, (uint8_t*)&(e[timer % 11]), 1, 100);
-	HAL_UART_Transmit(&huart1, (uint8_t*)e), 1, 100);
+//	HAL_UART_Transmit(&huart1, (uint8_t*)e), 1, 100);
+	LL_USART_TransmitData8(USART1, (uint8_t)e[timer % 11]);
+	itoa(timer, tim_str, 10);
+	LCD_DrawString(20, 50, BLACK, WHITE, tim_str, 16, 0);
 #endif
 #if DEVICE_ID == PLAYER2
 //	HAL_UART_Receive(&huart1, (uint8_t*)bu, 12, 1000);
+
+	// DO RECEIVE USING DMA
+	bu[timer % 11] = LL_USART_ReceiveData8(USART1);
+//	LL_USART_WriteReg(USART1, ICR, LL_USART_ICR_TCCF);
+//	USART1->ISR &= ~USART_ISR_ORE;
+//	LL_USART_RequestRxDataFlush(USART1);
 	LCD_DrawString(20, 20, BLACK, WHITE, bu, 16, 0);
+
 #endif
-	itoa(timer, tim_str, 10);
-	LCD_DrawString(20, 50, BLACK, WHITE, tim_str, 16, 0);
+
 	timer++;
-	nano_wait(ONE_MILLION);
+	nano_wait(ONE_THOUSAND);
 	}
 }
 
-#if DEVICE_ID == PLAYER2
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) // triggers once uart has finished receiving data
-{
-//    HAL_UART_Transmit(&huart1, UART1_rxBuffer, 12, 100);
-	if(huart->Instance == huart1.Instance) {
-		__HAL_UART_CLEAR_OREFLAG(huart);
-		__HAL_UART_SEND_REQ(huart, UART_RXDATA_FLUSH_REQUEST);
-		HAL_UART_Receive_IT(&huart1, (uint8_t*)bu, 11); // start data receive again
-	}
-}
-#endif
+//#if DEVICE_ID == PLAYER2
+//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) // triggers once uart has finished receiving data
+//{
+////    HAL_UART_Transmit(&huart1, UART1_rxBuffer, 12, 100);
+//	if(huart->Instance == huart1.Instance) {
+//		__HAL_UART_CLEAR_OREFLAG(huart);
+//		__HAL_UART_SEND_REQ(huart, UART_RXDATA_FLUSH_REQUEST);
+//		HAL_UART_Receive_IT(&huart1, (uint8_t*)bu, 11); // start data receive again
+//	}
+//}
+//#endif
 
 
 void test_scoreboard(void) {
@@ -178,11 +188,17 @@ void test_solenoid(void) {
 
 void test_servo(void) {
 	// positions are when looking at the servo top down with the wire coming out of the top
-	uint16_t continuous_clockwise = 500;
-	uint16_t up_left = 1000;
-	uint16_t left = 1500;
-	uint16_t down_left = 2000;
-	uint16_t down = 2500;
+//	uint16_t stop = 0;
+//	uint16_t continuous_ccw = 500;
+//	uint16_t continuous_cw = 3500;
+//	uint16_t up_left = 1000;
+//	uint16_t left = 1500;
+//	uint16_t down_left = 2000;
+//	uint16_t down = 2500;
+	uint16_t deg0 = 1000;
+	uint16_t deg45 = 1500;
+	uint16_t deg90 = 1750;
+	uint16_t deg135 = 2000;
 
 	// init buttons
 	init_pc0();
@@ -195,27 +211,30 @@ void test_servo(void) {
 	// init servo
 	init_pa8();
 	init_tim1();
-
 	char v_str[10];
+
 	while(1) {
 //		TIM1->CCR1 = vals[i++ % 3];
 
-		nano_wait(ONE_THOUSAND);
+		nano_wait(ONE_MILLION);
 		if(poll_pc0()) {
-			TIM1->CCR1 = 0;
-		} else if(poll_pc1()) {
 			TIM1->CCR1 = 2250;
-		} else if(poll_pc4()) {
+		} else if(poll_pc1()) {
 			TIM1->CCR1 = 1750;
+		} else if(poll_pc4()) {
+			TIM1->CCR1 = 1250;
 		}
-		int v = TIM1->CCR1;
-		itoa(v, v_str, 10);
+		uint16_t ccr = TIM1->CCR1;
+		itoa(ccr, v_str, 10);
 		LCD_DrawString(20, 40, BLACK, WHITE, v_str, 16, 0);
 	}
 }
 
 
 void test_leds(void) {
+#ifdef DEBUG_MODE
+	init_tft_lcd();
+#endif
 	init_ws2812b_leds();
 
 	uint8_t r = 56;

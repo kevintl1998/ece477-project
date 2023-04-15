@@ -12,7 +12,7 @@
 #define UNIT_TEST 2     // located in ./releases/unit_test.c
 #define OTHER 3         // For misc purposes. located in ./releases/entry.c
 
-#define RELEASE_TYPE UNIT_TEST
+#define RELEASE_TYPE RELEASE
 
 /*
  * SPECIFY THE DEVICE
@@ -20,11 +20,6 @@
 #define PLAYER1 0x02
 #define PLAYER2 0x03
 
-#define DEVICE_ID PLAYER2
-
-
-// i2c 7-bit address
-//#define P1_I2C_ADDRESS 0
-//#define P2_I2C_ADDRESS 3
+#define DEVICE_ID PLAYER1
 
 #endif

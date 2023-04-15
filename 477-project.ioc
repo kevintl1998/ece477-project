@@ -94,4 +94,4 @@ USART1.IPParameters=VirtualMode-Asynchronous,BaudRate,StopBits
 USART1.StopBits=STOPBITS_2
 USART1.VirtualMode-Asynchronous=VM_ASYNC
 board=custom
-isbadioc=true
+isbadioc=false

@@ -4,9 +4,6 @@
 #include <stdio.h>
 #include <stm32f0xx.h>
 #include <stm32f091xc.h>
-#include <stm32f0xx_hal_dma.h>
-#include <stm32f0xx_hal_rcc.h>
-#include <stm32f0xx_hal_gpio.h>
 #include <string.h>
 
 
@@ -51,9 +48,10 @@ void init_ws2812b_leds() {
 	// init led queue
 	for(int i = 0; i < WS_LED_COUNT; i++) {
 		WSLED_QueueInit(&(ws_wait_queue[i]), data_buffer[i], WS_QUEUE_LENGTH);
+		set_ws_led_io_buffer(ws_io_buffer, i, 0, 0, 0);
 	}
 
-	set_ws_led_io_buffer(ws_io_buffer, 0, 0, 0, 0);
+
 
 	// init hardware
 	init_pb4();

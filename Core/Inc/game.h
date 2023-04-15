@@ -3,6 +3,13 @@
 
 #include <stdint.h>
 
+#define LIFE_COUNT_1 1
+#define LIFE_COUNT_2 3
+#define LIFE_COUNT_3 5
+#define LIFE_COUNT_4 10
+
+#define SCROLL_PAUSE_TIME (ONE_MILLION * 200)
+
 typedef struct GameState {
 	// variables for updating scoreboard rendering
 	uint8_t left_button_pressed;
@@ -27,12 +34,21 @@ typedef struct GameState {
 	uint8_t leds_enabled;
 	uint8_t audio_enabled;
 
+	// starting life count option # (for choosing # of lives in main menu)
+	uint8_t lives_option;
+
 	uint8_t is_multiplayer;
 
-	uint8_t balls_left;
+	uint8_t lives_left;
 	uint32_t score;
 } GameState;
+
+// global gamestate variable
 extern GameState* gameState;
+
+// list of all life options
+extern uint8_t lives[];
+
 
 void init_hardware(void);
 

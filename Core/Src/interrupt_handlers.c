@@ -56,11 +56,19 @@ void TIM15_IRQHandler(void) {
 void TIM16_IRQHandler(void) {
 	TIM16->SR &= ~TIM_SR_UIF;
 
+	static uint8_t led_r = 100;
+	static uint8_t led_g = 210;
+	static uint8_t led_b = 43;
 	// set led queue here
 	// have var(s) in GameState for the led sequence(s) that
 	// should be displayed(set by the timer whos peripheral those leds are close to),
 	// then have this function decode them to display a specific led pattern
-
+	if(gameState->leds_enabled) {
+		for(int i = 0; i < WS_LED_COUNT; i++) {
+			led_r += (i * 13); led_g += (i * 45); led_b += (i * 32);
+			add_to_ws_queue(i, led_r, led_g, led_b, 500);
+		}
+	}
 }
 
 

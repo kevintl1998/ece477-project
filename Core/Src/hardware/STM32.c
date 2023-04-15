@@ -1,8 +1,8 @@
 #include "hardware/STM32.h"
 
 #include "stm32f0xx.h"
-#include "stm32f0xx_hal.h"
-#include "stm32f0xx_hal_gpio.h"
+//#include "stm32f0xx_hal.h"
+//#include "stm32f0xx_hal_gpio.h"
 #include "stm32f0xx_ll_dma.h"
 #include "core_cm0.h"
 
@@ -10,9 +10,9 @@
 #include "util.h"
 
 
-GPIO_InitTypeDef pc0_init;
-GPIO_InitTypeDef pc1_init;
-GPIO_InitTypeDef pb4_init;
+//GPIO_InitTypeDef pc0_init;
+//GPIO_InitTypeDef pc1_init;
+//GPIO_InitTypeDef pb4_init;
 
 
 void init_pb12(void) {
@@ -27,23 +27,28 @@ void init_pb12(void) {
 
 void init_pc0(void) {
 	// button 0
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	pc0_init.Pin = GPIO_PIN_0;
-	pc0_init.Mode = GPIO_MODE_INPUT;
-//	pc0_init.Pull = GPIO_NOPULL;
-	pc0_init.Pull = GPIO_PULLDOWN;
-	HAL_GPIO_Init(GPIOC, &pc0_init);
+//	__HAL_RCC_GPIOC_CLK_ENABLE();
+//	pc0_init.Pin = GPIO_PIN_0;
+//	pc0_init.Mode = GPIO_MODE_INPUT;
+//	pc0_init.Pull = GPIO_PULLDOWN;
+//	HAL_GPIO_Init(GPIOC, &pc0_init);
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+	GPIOC->MODER &= ~(3 << (0 * 2));
+	GPIOC->PUPDR &= ~(3 << (0 * 2));
+	GPIOC->PUPDR |= 2 << (0 * 2);
 }
 
 void init_pc1(void) {
 	// button 1
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	pc1_init.Pin = GPIO_PIN_1;
-	pc1_init.Mode = GPIO_MODE_INPUT;
-//	pc1_init.Pull = GPIO_NOPULL;
-	pc1_init.Pull = GPIO_PULLDOWN;
-	HAL_GPIO_Init(GPIOC, &pc1_init);
-
+//	__HAL_RCC_GPIOC_CLK_ENABLE();
+//	pc1_init.Pin = GPIO_PIN_1;
+//	pc1_init.Mode = GPIO_MODE_INPUT;
+//	pc1_init.Pull = GPIO_PULLDOWN;
+//	HAL_GPIO_Init(GPIOC, &pc1_init);
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+	GPIOC->MODER &= ~(3 << (1 * 2));
+	GPIOC->PUPDR &= ~(3 << (1 * 2));
+	GPIOC->PUPDR |= 2 << (1 * 2);
 }
 
 // ==================================
@@ -292,7 +297,7 @@ void init_tim1(void) {
 	TIM1->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;   // Set PWM mode 1
 	TIM1->CCER |= TIM_CCER_CC1E;   // Enable capture/compare 1 output
     TIM1->BDTR |= TIM_BDTR_MOE;
-	TIM1->CCR1 = 500;
+	TIM1->CCR1 = 0;
 
 	// enable timer
 	TIM1->CR1 |= TIM_CR1_CEN;

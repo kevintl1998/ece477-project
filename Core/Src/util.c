@@ -1,6 +1,7 @@
 #include "util.h"
 #include "stm32f0xx.h"
 #include <string.h>
+#include <stdint.h>
 
 
 void nano_wait(unsigned int n) {
@@ -20,4 +21,17 @@ int abs(int n) {
 int sign(int n) {
 //    return n > 0 ? 1 : n == 0 ? 0 : -1;
     return n > 0 ? 1 : -1;
+}
+
+uint32_t digits_to_arr(uint32_t number, uint32_t* arr, uint32_t arr_size) {
+    uint32_t digits = 0;
+        while (number > 0) {
+        if(digits == arr_size) {
+        	break;
+        }
+        arr[digits] = number % 10;
+        number = number / 10;
+        digits++;
+    }
+    return digits;
 }

@@ -24,6 +24,10 @@ int sign(int n) {
 }
 
 uint32_t digits_to_arr(uint32_t number, uint32_t* arr, uint32_t arr_size) {
+	if(number == 0) {
+		arr[0] = 0;
+		return 1;
+	}
     uint32_t digits = 0;
         while (number > 0) {
         if(digits == arr_size) {

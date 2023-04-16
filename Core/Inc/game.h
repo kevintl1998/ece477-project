@@ -34,6 +34,10 @@ typedef struct GameState {
 	uint8_t leds_enabled;
 	uint8_t audio_enabled;
 
+	// for syncing game start and game end between the mcus
+	uint8_t player_ready;
+	uint8_t other_ready;
+
 	// starting life count option # (for choosing # of lives in main menu)
 	uint8_t lives_option;
 

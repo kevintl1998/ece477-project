@@ -8,7 +8,9 @@
 #include "interfacing/solenoids.h"
 #include "interfacing/buttons.h"
 #include "interfacing/switches.h"
+#include "interfacing/mcu_comms.h"
 
+#include "settings.h"
 #include "game.h"
 
 // timer 14 interrupt handler
@@ -71,11 +73,15 @@ void TIM16_IRQHandler(void) {
 	}
 }
 
-
+// usart poll interrupt
+//extern usart_buffer;
 void TIM17_IRQHandler(void) {
 	TIM17->SR &= ~TIM_SR_UIF;
 
-
+	// p1: wait until gamemode and lives left are selected then send a message to p2
+	// p2: wait until message recv from p1
+	send_data();
+	recv_data();
 }
 
 

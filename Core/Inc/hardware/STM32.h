@@ -49,8 +49,8 @@ void init_pb1(void);
 void init_pc5(void);
 
 // usart comms between mcu
-void init_pb6(void); // SCL
-void init_pb7(void); // SDA
+void init_pb6(void); // tx
+void init_pb7(void); // rx
 
 // pin poll/set functions
 
@@ -85,7 +85,7 @@ void init_tim3(uint32_t dma_srcAddr);
 void init_tim14(void);
 void init_tim15(void);
 void init_tim16(void);
-void init_tim17(void); // solenoid poll interrupt
+void init_tim17(void);
 
 void enable_timer(TIM_TypeDef *timer);
 void disable_timer(TIM_TypeDef *timer);

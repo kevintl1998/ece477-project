@@ -47,8 +47,8 @@ int unit_test(void) {
         // test functions for p1
 //    	test_scoreboard();
 //		test_servo();
-    	test_leds();
-//    	test_usart();
+//    	test_leds();
+    	test_usart();
     } else if(DEVICE_ID == PLAYER2) {
         // test functions for p2
 //    	test_scoreboard();
@@ -66,42 +66,26 @@ int unit_test(void) {
 }
 
 
-char bu[11];
+uint8_t usart_buffer;
 void test_usart(void) {
 	init_tft_lcd();
-	uint32_t timer = 0;
-	char tim_str[20];
+	uint8_t timer = 0;
+	char buf_str[8];
 
-#if DEVICE_ID == PLAYER2
-	// for interrupt
-	bu[0] = '\0';
-//	HAL_UART_Receive_IT(&huart1, (uint8_t*)bu, 1); // start uart receive data
-#endif
-
-//	LCD_DrawString(100, 100, BLACK, WHITE, "bonk", 16, 0);
-	char e[11] = "hello world";
-	while(1) {
 #if DEVICE_ID == PLAYER1
-//	HAL_UART_Transmit(&huart1, (uint8_t*)&(e[timer % 11]), 1, 100);
-//	HAL_UART_Transmit(&huart1, (uint8_t*)e), 1, 100);
-	LL_USART_TransmitData8(USART1, (uint8_t)e[timer % 11]);
-	itoa(timer, tim_str, 10);
-	LCD_DrawString(20, 50, BLACK, WHITE, tim_str, 16, 0);
-#endif
-#if DEVICE_ID == PLAYER2
-//	HAL_UART_Receive(&huart1, (uint8_t*)bu, 12, 1000);
-
-	// DO RECEIVE USING DMA
-	bu[timer % 11] = LL_USART_ReceiveData8(USART1);
-//	LL_USART_WriteReg(USART1, ICR, LL_USART_ICR_TCCF);
-//	USART1->ISR &= ~USART_ISR_ORE;
-//	LL_USART_RequestRxDataFlush(USART1);
-	LCD_DrawString(20, 20, BLACK, WHITE, bu, 16, 0);
-
-#endif
-
+	LL_USART_TransmitData8(USART1, timer);
 	timer++;
-	nano_wait(ONE_THOUSAND);
+#endif
+	while(1) {
+		if(USART1->ISR & USART_ISR_RXNE) {
+			uint8_t recvd = LL_USART_ReceiveData8(USART1);
+			itoa(recvd, buf_str, 10);
+			LCD_DrawFillRectangle(10,0,100,30,WHITE);
+			LCD_DrawString(10, 10, BLACK, WHITE, buf_str, 16, 10);
+			timer++;
+			LL_USART_TransmitData8(USART1, timer);
+//			nano_wait(ONE_MILLION * 500);
+		}
 	}
 }
 
@@ -242,12 +226,20 @@ void test_leds(void) {
 	uint8_t b = 99;
 
 	while(1) {
-		nano_wait(ONE_BILLION);
+		nano_wait(ONE_MILLION * 500);
 
-		add_to_ws_queue(0, r, g, b, 500);
-		add_to_ws_queue(0, r + 54, g + 85, b + 99, 500);
-		add_to_ws_queue(1, r + 20, g, b + 211, 5000);
-		add_to_ws_queue(1, r + 89, g + 4, b, 10000);
+		for(int i = 0; i < WS_LED_COUNT; i++) {
+
+			add_to_ws_queue(i, r, g, b, 500);
+//			add_to_ws_queue(i, r + 54, g + 85, b + 99, 50);
+		}
+
+//		add_to_ws_queue(0, r, g, b, 500);
+//		add_to_ws_queue(0, r + 54, g + 85, b + 99, 500);
+//		add_to_ws_queue(1, r + 20, g, b + 211, 5000);
+//		add_to_ws_queue(1, r + 89, g + 4, b, 10000);
+//		add_to_ws_queue(2, r + 20, g, b + 211, 5000);
+//		add_to_ws_queue(2, r + 89, g + 4, b, 10000);
 #ifdef DEBUG_MODE
 		display_buff();
 #endif

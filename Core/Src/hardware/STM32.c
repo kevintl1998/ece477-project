@@ -366,13 +366,13 @@ void init_tim16(void) {
 }
 
 void init_tim17(void) {
-//	RCC->APB2ENR |= RCC_APB2ENR_TIM17EN;
-//	TIM17->PSC = 1000-1;
-//	TIM17->ARR = 500-1;
-//
-//	TIM17->DIER |= TIM_DIER_UIE;
-//	TIM17->CR1 |= TIM_CR1_CEN;
-//	NVIC_EnableIRQ(TIM17_IRQn);
+	RCC->APB2ENR |= RCC_APB2ENR_TIM17EN;
+	TIM17->PSC = 48-1;
+	TIM17->ARR = 2500-1;
+
+	TIM17->DIER |= TIM_DIER_UIE;
+	TIM17->CR1 |= TIM_CR1_CEN;
+	NVIC_EnableIRQ(TIM17_IRQn);
 }
 
 void enable_timer(TIM_TypeDef *timer) {

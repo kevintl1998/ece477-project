@@ -9,8 +9,8 @@
 
 // global scoreboard constants
 #if USE_HORIZONTAL == 0 || USE_HORIZONTAL == 2
-#define SCOREBOARD_W LCD_W
-#define SCOREBOARD_H LCD_H
+#define SCOREBOARD_WIDTH LCD_W
+#define SCOREBOARD_HEIGHT LCD_H
 #endif
 #if USE_HORIZONTAL == 1 || USE_HORIZONTAL == 3
 #define SCOREBOARD_WIDTH LCD_H
@@ -19,8 +19,8 @@
 
 
 // gamemode select screen constants
-#define GAMEMODE_SELECT_LOGO_X 		0
-#define GAMEMODE_SELECT_LOGO_Y 		0
+#define GAMEMODE_SELECT_LOGO_X 		35
+#define GAMEMODE_SELECT_LOGO_Y 		10
 #define SINGLE_TEXT_X 				10
 #define SINGLE_TEXT_Y 				125
 #define MULTI_TEXT_X 				250
@@ -33,8 +33,8 @@
 
 
 // lives select screen constants
-#define LIVES_OPTIONS_LOGO_X 			35
-#define LIVES_OPTIONS_LOGO_Y 			10
+#define LIVES_OPTIONS_LOGO_X 			GAMEMODE_SELECT_LOGO_X
+#define LIVES_OPTIONS_LOGO_Y 			GAMEMODE_SELECT_LOGO_Y
 #define NUM_LIVES_OPTION_TEXT_X 		50
 #define NUM_LIVES_OPTION_TEXT_Y 		90
 #define LIVES_OPTIONS_SPACING 			50
@@ -61,7 +61,7 @@
 #define LIVES_START_X SCORE_START_X
 #define LIVES_Y (LIVES_TEXT_Y + lives_text.height - red_nums[0]->height)
 
-// list of all life option x values
+// list of all life option x positions
 extern uint8_t selector_x[];
 
 
@@ -74,6 +74,7 @@ void clear_screen(void);
 void start_menu_render(void);
 void start_menu_options_render(void);
 void score_display_render(GameState* gs);
+void gameover_render(GameState* gs);
 
 void start_menu_update();
 void start_menu_options_update();

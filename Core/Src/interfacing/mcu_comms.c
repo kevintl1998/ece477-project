@@ -16,11 +16,12 @@ void handle_player_lives_message(void);
 CommState __commState;
 CommState* commState = &__commState;
 
+
+// arrays to provide easy relation of message type to various data about them (message number is the index)
 // the message length of the associate message type (not including the initial message type message)
 uint8_t message_lengths[] = {0, 1, 0, 4, 1};
+// message handler functions for the associated message type
 void (*message_handler[])() = { handle_ack_message, handle_options_message, handle_player_ready_message, handle_player_score_message, handle_player_lives_message };
-
-
 
 
 void init_comms(void) {
@@ -74,25 +75,36 @@ void send_player_ready(void) {
 	start_send(COMM_PLAYER_READY);
 }
 
-#if DEVICE_ID == PLAYER1
 void send_game_options(GameState* gs) {
-	commState->send_buffer[1] = ((uint8_t)gs->is_multiplayer) << 4;
+	commState->send_buffer[1] = ((uint8_t)gs->gameMode) << 4;
 	commState->send_buffer[1] |= (uint8_t)gs->lives_option;
 	start_send(COMM_OPTIONS);
 }
-#endif
+
+void send_score(GameState* gs) {
+	commState->send_buffer[1] = (gs->score >> (8 * 3)) & 0xFF;
+	commState->send_buffer[2] |= (gs->score >> (8 * 2)) & 0xFF;
+	commState->send_buffer[3] |= (gs->score >> (8 * 1)) & 0xFF;
+	commState->send_buffer[4] |= (gs->score >> (8 * 0)) & 0xFF;
+	start_send(COMM_PLAYER_SCORE);
+}
+
+void send_lives(GameState* gs) {
+	commState->send_buffer[1] = gs->lives_left;
+	start_send(COMM_PLAYER_LIVES);
+}
 
 void handle_ack_message(void) {
 	// msg not used
 }
 void handle_options_message(void) {
-	// only p2 should recv this message
+	// only p2 should receive this message
 #if DEVICE_ID == PLAYER2
 	// update gameState
-	uint8_t is_multiplayer = commState->recv_buffer[1] >> 4;
+	uint8_t gameMode = commState->recv_buffer[1] >> 4;
 	uint32_t lives_option = commState->recv_buffer[1] & 0xF;
-	gameState->is_multiplayer = is_multiplayer;
-	gameState->lives_option = lives_option;
+	gameState->gameMode = gameMode;
+	gameState->lives_option = gameState->gameMode ? lives_option : 0;
 	gameState->lives_left = lives[lives_option];
 #endif
 }
@@ -102,10 +114,24 @@ void handle_player_ready_message(void) {
 }
 void handle_player_score_message(void) {
 	// update gameState
-	// fill send buffer to send lives
+	uint32_t score = 0;
+	score |= commState->recv_buffer[1] << (8 * 3);
+	score |= commState->recv_buffer[2] << (8 * 2);
+	score |= commState->recv_buffer[3] << (8 * 1);
+	score |= commState->recv_buffer[4] << (8 * 0);
+	gameState->other_score = score;
+#if DEVICE_ID == PLAYER2
+	// player 2 responds to player 1 with their score
+	send_score(gameState);
+#endif
+
 }
 void handle_player_lives_message(void) {
 	// update gameState
-	// fill send buffer to send score
+	gameState->other_lives = commState->recv_buffer[1];
+#if DEVICE_ID == PLAYER2
+	// player 2 responds to player 1 with their life count
+	send_lives(gameState);
+#endif
 }
 

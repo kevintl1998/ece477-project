@@ -45,9 +45,8 @@ uint8_t send_data(void);
 void start_send(uint8_t msg_type);
 
 void send_player_ready(void);
-
-#if DEVICE_ID == PLAYER1
 void send_game_options(GameState* gs);
-#endif
+void send_lives(GameState* gs);
+void send_score(GameState* gs);
 
 #endif

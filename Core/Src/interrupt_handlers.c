@@ -12,6 +12,8 @@
 
 #include "settings.h"
 #include "game.h"
+#include "util.h"
+
 
 // timer 14 interrupt handler
 // used to poll buttons and update their state
@@ -19,18 +21,21 @@ void TIM14_IRQHandler(void) {
     TIM14->SR &= ~TIM_SR_UIF;
     // timer 15 interrupt handler
     // used to update the state of the solenoids and switches
-    uint8_t left = 0;
-    uint8_t right = 0;
-    uint8_t select = 0;
+    static uint8_t left_history;
+    static uint8_t right_history;
+    static uint8_t select_history;
 
-    if(gameState->buttons_enabled) {
-    	left = poll_LB();
-    	right = poll_RB();
-    	select = poll_Select();
-    }
-    gameState->left_button_pressed = left;
-    gameState->right_button_pressed = right;
-    gameState->select_button_pressed = select;
+	#define MAX_HOLD 6
+	#define HOLD_ON 3
+
+    update_debounce_history(&left_history, poll_LB(), MAX_HOLD);
+    update_debounce_history(&right_history, poll_RB(), MAX_HOLD);
+    update_debounce_history(&select_history, poll_Select(), MAX_HOLD);
+
+    gameState->left_button_pressed = left_history > HOLD_ON ? 1 : 0;
+    gameState->right_button_pressed = right_history > HOLD_ON ? 1 : 0;
+    gameState->select_button_pressed = select_history > HOLD_ON ? 1 : 0;
+
 }
 
 
@@ -43,8 +48,8 @@ void TIM15_IRQHandler(void) {
 
 	if(gameState->solenoids_enabled) {
 		// update flipper solenoids
-		update_left_flipper(gameState, poll_LB());
-		update_right_flipper(gameState, poll_RB());
+		update_left_flipper(gameState, gameState->left_button_pressed);
+		update_right_flipper(gameState, gameState->right_button_pressed);
 
 		// update solenoids activated by switches
 		update_obstacle1(gameState, !poll_switch1());
@@ -74,12 +79,9 @@ void TIM16_IRQHandler(void) {
 }
 
 // usart poll interrupt
-//extern usart_buffer;
 void TIM17_IRQHandler(void) {
 	TIM17->SR &= ~TIM_SR_UIF;
 
-	// p1: wait until gamemode and lives left are selected then send a message to p2
-	// p2: wait until message recv from p1
 	send_data();
 	recv_data();
 }

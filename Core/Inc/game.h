@@ -3,12 +3,17 @@
 
 #include <stdint.h>
 
+#define GAMEMODE_NULL (uint8_t)(0-1)
+#define GAMEMODE_SINGLEPLAYER 0
+#define GAMEMODE_MULTIPLAYER 1
+
 #define LIFE_COUNT_1 1
 #define LIFE_COUNT_2 3
 #define LIFE_COUNT_3 5
 #define LIFE_COUNT_4 10
 
-#define SCROLL_PAUSE_TIME (ONE_MILLION * 200)
+#define SCROLL_PAUSE_TIME (ONE_MILLION * 175)
+#define MENU_WAIT_TIME (ONE_MILLION * 175)
 
 typedef struct GameState {
 	// variables for updating scoreboard rendering
@@ -41,10 +46,14 @@ typedef struct GameState {
 	// starting life count option # (for choosing # of lives in main menu)
 	uint8_t lives_option;
 
-	uint8_t is_multiplayer;
+	uint8_t gameMode; // singleplayer or multiplayer
 
 	uint8_t lives_left;
 	uint32_t score;
+
+	// score and life cound of other player
+	uint32_t other_score;
+	uint32_t other_lives;
 } GameState;
 
 // global gamestate variable

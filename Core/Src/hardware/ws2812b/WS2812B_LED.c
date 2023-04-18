@@ -66,6 +66,10 @@ int add_to_ws_queue(uint32_t led_num, uint8_t r, uint8_t g, uint8_t b, uint32_t 
 	return WSLED_QueueAdd(&(ws_wait_queue[led_num]), r, g, b, hold_cycles);
 }
 
+void set_led_color(uint32_t led_num, uint8_t r, uint8_t g, uint8_t b) {
+	set_ws_led_io_buffer(ws_io_buffer, led_num, r, g, b);
+}
+
 void ws_update_buffer() {
 	// to be used by the dma transfer complete interrupt handler
 	// updates the buffer with the next value in the queue

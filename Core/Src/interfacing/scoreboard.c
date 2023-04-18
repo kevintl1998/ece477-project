@@ -66,18 +66,26 @@ void score_display_render(GameState* gs) {
 }
 
 void gameover_render(GameState* gs) {
-	if(gs->is_multiplayer) {
+	if(gs->gameMode == GAMEMODE_MULTIPLAYER) {
 		// display multiplayer game end screen
 		// display winner or loser
+		if(gameState->other_lives == gameState->lives_left) {
+			LCD_DrawString(0,0,WHITE,BLACK,"its a tie!",16,0);
+		} else if(gameState->other_lives == 0) {
+			LCD_DrawString(0,0,WHITE,BLACK,"you win!",16,0);
+		} else {
+			LCD_DrawString(0,0,WHITE,BLACK,"you lose :(", 16, 0);
+		}
 
 		// display your score and opponents score
 	} else {
 		// display singleplayer game end screen
+		LCD_DrawString(0,0,WHITE,BLACK,"insert score here", 16,0);
 	}
 }
 
 void start_menu_update(GameState* gs) {
-	if(gs->is_multiplayer) {
+	if(gs->gameMode) {
 		LCD_DrawFillRectangle(GAMEMODE_SELECTOR_SINGLE_X, GAMEMODE_SELECTOR_Y, GAMEMODE_SELECTOR_SINGLE_X + selector_arrow.width, GAMEMODE_SELECTOR_Y + selector_arrow.height, BLACK);
 		LCD_DrawPicture(GAMEMODE_SELECTOR_MULTI_X, GAMEMODE_SELECTOR_Y, (const Picture*)&selector_arrow);
 	} else {

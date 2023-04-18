@@ -54,10 +54,8 @@
 #define SCORE_TEXT_Y (SCORE_LOGO_Y + logo_small.height + 20)
 #define LIVES_TEXT_X SCORE_TEXT_X
 #define LIVES_TEXT_Y (SCORE_TEXT_Y + score_text.height + 20)
-//#define SCORE_START_X (SCORE_TEXT_X + score_text.width)
 #define SCORE_START_X (SCORE_TEXT_X + (score_text.width > lives_text.width ? score_text.width : lives_text.width))
 #define SCORE_Y (SCORE_TEXT_Y + score_text.height - blue_nums[0]->height)
-//#define LIVES_START_X (LIVES_TEXT_X + lives_text.width)
 #define LIVES_START_X SCORE_START_X
 #define LIVES_Y (LIVES_TEXT_Y + lives_text.height - red_nums[0]->height)
 

@@ -34,6 +34,7 @@ void clear_ws_led_io_buffer(uint16_t* IObuffer, uint32_t led_num);
 void init_ws2812b_leds();
 
 int add_to_ws_queue(uint32_t led_num, uint8_t r, uint8_t g, uint8_t b, uint32_t hold_cycles);
+void set_led_color(uint32_t led_num, uint8_t r, uint8_t g, uint8_t b);
 
 // function to be called by DMA transmission complete interrupt
 void ws_update_buffer();

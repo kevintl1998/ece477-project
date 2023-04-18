@@ -47,8 +47,8 @@ int unit_test(void) {
         // test functions for p1
 //    	test_scoreboard();
 //		test_servo();
-//    	test_leds();
-    	test_usart();
+    	test_leds();
+//    	test_usart();
     } else if(DEVICE_ID == PLAYER2) {
         // test functions for p2
 //    	test_scoreboard();
@@ -171,18 +171,13 @@ void test_solenoid(void) {
 }
 
 void test_servo(void) {
-	// positions are when looking at the servo top down with the wire coming out of the top
-//	uint16_t stop = 0;
-//	uint16_t continuous_ccw = 500;
-//	uint16_t continuous_cw = 3500;
-//	uint16_t up_left = 1000;
-//	uint16_t left = 1500;
-//	uint16_t down_left = 2000;
-//	uint16_t down = 2500;
-	uint16_t deg0 = 1000;
-	uint16_t deg45 = 1500;
-	uint16_t deg90 = 1750;
-	uint16_t deg135 = 2000;
+	// SERVO 1
+//	uint16_t load_ball = 1600;
+//	uint16_t get_ball = 2450;
+	// SERVO 2
+	uint16_t load_ball = 1500;
+	uint16_t get_ball = 2425;
+
 
 	// init buttons
 	init_pc0();
@@ -202,11 +197,11 @@ void test_servo(void) {
 
 		nano_wait(ONE_MILLION);
 		if(poll_pc0()) {
-			TIM1->CCR1 = 2250;
+			TIM1->CCR1 = get_ball;
 		} else if(poll_pc1()) {
-			TIM1->CCR1 = 1750;
+			TIM1->CCR1 = load_ball;
 		} else if(poll_pc4()) {
-			TIM1->CCR1 = 1250;
+			TIM1->CCR1 = 1100;
 		}
 		uint16_t ccr = TIM1->CCR1;
 		itoa(ccr, v_str, 10);
@@ -229,8 +224,8 @@ void test_leds(void) {
 		nano_wait(ONE_MILLION * 500);
 
 		for(int i = 0; i < WS_LED_COUNT; i++) {
-
-			add_to_ws_queue(i, r, g, b, 500);
+			set_led_color(i, r + (i*54), g + (i*23), b + (i*99));
+//			add_to_ws_queue(i, r, g, b, 500);
 //			add_to_ws_queue(i, r + 54, g + 85, b + 99, 50);
 		}
 

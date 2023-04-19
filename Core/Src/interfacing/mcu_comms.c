@@ -13,7 +13,7 @@ void handle_player_ready_message(void);
 void handle_player_score_message(void);
 void handle_player_lives_message(void);
 
-CommState __commState;
+volatile CommState __commState;
 CommState* commState = &__commState;
 
 

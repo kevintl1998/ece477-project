@@ -12,7 +12,7 @@
 #define UNIT_TEST 2     // located in ./releases/unit_test.c
 #define OTHER 3         // For misc purposes. located in ./releases/entry.c
 
-#define RELEASE_TYPE RELEASE
+#define RELEASE_TYPE UNIT_TEST
 
 /*
  * SPECIFY THE DEVICE

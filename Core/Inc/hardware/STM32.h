@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include "stm32f091xc.h"
 
+#include "hardware/audio/midiplay.h"
+
 // GPIO functions
 
 // gpio test led
@@ -82,6 +84,8 @@ void set_pc9(uint8_t val);
 // timer functions
 void init_tim1(void);
 void init_tim3(uint32_t dma_srcAddr);
+void init_tim2(int n);
+void init_tim6(void);
 void init_tim14(void);
 void init_tim15(void);
 void init_tim16(void);
@@ -95,9 +99,13 @@ void init_dma1_ch3(uint32_t memAddr, uint16_t memAddrLen, uint32_t periphAddr);
 void enable_dma1_ch3();
 void disable_dma1_ch3();
 
+// init dac
+void init_dac(void);
+
 // usart functions
 void init_usart(void);
 
+// other
 void hard_reset(void);
 
 #endif

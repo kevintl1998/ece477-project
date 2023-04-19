@@ -38,13 +38,13 @@ void WEAK sysex_info(int time, const uint8_t *p, const uint8_t *buf, int len,
 {
 }
 
-void WEAK note_off(int time, int chan, int key, int velo)
-{
-}
+//void WEAK note_off(int time, int chan, int key, int velo)
+//{
+//}
 
-void WEAK note_on(int time, int chan, int key, int velo)
-{
-}
+//void WEAK note_on(int time, int chan, int key, int velo)
+//{
+//}
 
 void WEAK key_pressure(int time, int chan, int key, int val)
 {
@@ -62,9 +62,9 @@ void WEAK channel_pressure(int time, int chan, int val)
 {
 }
 
-void WEAK pitch_wheel_change(int time, int chan, int val)
-{
-}
+//void WEAK pitch_wheel_change(int time, int chan, int val)
+//{
+//}
 void WEAK text_event(const char *str, int len)
 {
 }
@@ -83,9 +83,9 @@ void WEAK marker(int time, const char *str, int len)
 void WEAK end_of_track(int time)
 {
 }
-void WEAK set_tempo(int time, int value, const MIDI_Header *hdr)
-{
-}
+//void WEAK set_tempo(int time, int value, const MIDI_Header *hdr)
+//{
+//}
 void WEAK smpte_offset(int time, int hr, int mn, int se, int fr, int ff)
 {
 }

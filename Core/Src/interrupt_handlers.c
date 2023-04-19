@@ -4,6 +4,7 @@
 
 #include "hardware/STM32.h"
 #include "hardware/ws2812b/WS2812B_LED.h"
+#include "hardware/audio/audio.h"
 
 #include "interfacing/solenoids.h"
 #include "interfacing/buttons.h"
@@ -19,8 +20,7 @@
 // used to poll buttons and update their state
 void TIM14_IRQHandler(void) {
     TIM14->SR &= ~TIM_SR_UIF;
-    // timer 15 interrupt handler
-    // used to update the state of the solenoids and switches
+
     static uint8_t left_history;
     static uint8_t right_history;
     static uint8_t select_history;
@@ -41,6 +41,8 @@ void TIM14_IRQHandler(void) {
 
 void TIM15_IRQHandler(void) {
 	TIM15->SR &= ~TIM_SR_UIF;
+    // timer 15 interrupt handler
+    // used to update the state of the solenoids and switches
 
 	if(gameState->switches_enabled) {
 		// update switch states in gamestate
@@ -59,7 +61,7 @@ void TIM15_IRQHandler(void) {
 	}
 }
 
-
+// interrupt for updating led values
 void TIM16_IRQHandler(void) {
 	TIM16->SR &= ~TIM_SR_UIF;
 
@@ -78,7 +80,7 @@ void TIM16_IRQHandler(void) {
 	}
 }
 
-// usart poll interrupt
+// interrupt for polling usart
 void TIM17_IRQHandler(void) {
 	TIM17->SR &= ~TIM_SR_UIF;
 
@@ -86,25 +88,45 @@ void TIM17_IRQHandler(void) {
 	recv_data();
 }
 
+// ========== AUDIO ==========
 
-void TIM3_IRQHandler(void) {
 
-	if (TIM3->SR & TIM_SR_UIF) { // update interrupt
-		TIM3->SR &= ~TIM_SR_UIF;
-		//	DMA1_Channel3->CCR |= DMA_CCR_EN; // dma enable
-	} else if (TIM3->SR & TIM_SR_CC1IF) { // cc1 interrupt
-		TIM3->SR &= ~TIM_SR_CC1IF;
-
-	} else if (TIM3->SR & TIM_SR_CC2IF) { // cc2 interrupt
-		TIM3->SR &= ~TIM_SR_CC2IF;
-
-	} else if (TIM3->SR & TIM_SR_CC3IF) { // cc3 interrupt
-		TIM3->SR &= ~TIM_SR_CC3IF;
-
-	} else if (TIM3->SR & TIM_SR_CC4IF) { // cc4 interrupt
-		TIM3->SR &= ~TIM_SR_CC4IF;
-	}
+void TIM6_DAC_IRQHandler(void)
+{
+    TIM6->SR &= ~TIM_SR_UIF;
+    // We'll use the Timer 6 IRQ to recompute samples and feed those
+    // samples into the DAC.
+    int sample = 0;
+    for(int x=0; x < VOICES; x++) {
+        if (voice[x].in_use) {
+            voice[x].offset += voice[x].step;
+            if (voice[x].offset >= WAVETABLE_SIZE<<16)
+                voice[x].offset -= WAVETABLE_SIZE<<16;
+            sample += (wavetable[voice[x].offset>>16] * voice[x].volume) >> 4;
+        }
+    }
+    sample = (sample >> 10) + 2048;
+    if (sample > 4095)
+        sample = 4095;
+    else if (sample < 0)
+        sample = 0;
+    DAC->DHR12R1 = sample;
+    if (mp->nexttick == MAXTICKS)
+        mp = midi_init(midifile);
 }
+
+#if 1
+int time = 0;
+int n = 0;
+void TIM2_IRQHandler(void)
+{
+    TIM2->SR &= ~TIM_SR_UIF;
+
+    midi_play();
+}
+#endif
+
+// ========================
 
 void DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler(void) {
 	if (DMA1->ISR | DMA_ISR_TCIF3) { // transfer complete on channel 3 (for tim3)
@@ -114,5 +136,17 @@ void DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler(void) {
 	}
 }
 
-
-
+// not used
+void TIM3_IRQHandler(void) {
+	if (TIM3->SR & TIM_SR_UIF) { // update interrupt
+		TIM3->SR &= ~TIM_SR_UIF;
+	} else if (TIM3->SR & TIM_SR_CC1IF) { // cc1 interrupt
+		TIM3->SR &= ~TIM_SR_CC1IF;
+	} else if (TIM3->SR & TIM_SR_CC2IF) { // cc2 interrupt
+		TIM3->SR &= ~TIM_SR_CC2IF;
+	} else if (TIM3->SR & TIM_SR_CC3IF) { // cc3 interrupt
+		TIM3->SR &= ~TIM_SR_CC3IF;
+	} else if (TIM3->SR & TIM_SR_CC4IF) { // cc4 interrupt
+		TIM3->SR &= ~TIM_SR_CC4IF;
+	}
+}

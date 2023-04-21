@@ -1,9 +1,8 @@
 #include "hardware/STM32.h"
 
 #include "stm32f0xx.h"
-#include "stm32f091xc.h"
-#include "stm32f0xx_hal.h"
-#include "stm32f0xx_hal_gpio.h"
+//#include "stm32f0xx_hal.h"
+//#include "stm32f0xx_hal_gpio.h"
 #include "stm32f0xx_ll_dma.h"
 #include "core_cm0.h"
 
@@ -11,9 +10,9 @@
 #include "util.h"
 
 
-GPIO_InitTypeDef pc0_init;
-GPIO_InitTypeDef pc1_init;
-GPIO_InitTypeDef pb4_init;
+//GPIO_InitTypeDef pc0_init;
+//GPIO_InitTypeDef pc1_init;
+//GPIO_InitTypeDef pb4_init;
 
 
 void init_pb12(void) {
@@ -28,23 +27,28 @@ void init_pb12(void) {
 
 void init_pc0(void) {
 	// button 0
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	pc0_init.Pin = GPIO_PIN_0;
-	pc0_init.Mode = GPIO_MODE_INPUT;
-//	pc0_init.Pull = GPIO_NOPULL;
-	pc0_init.Pull = GPIO_PULLDOWN;
-	HAL_GPIO_Init(GPIOC, &pc0_init);
+//	__HAL_RCC_GPIOC_CLK_ENABLE();
+//	pc0_init.Pin = GPIO_PIN_0;
+//	pc0_init.Mode = GPIO_MODE_INPUT;
+//	pc0_init.Pull = GPIO_PULLDOWN;
+//	HAL_GPIO_Init(GPIOC, &pc0_init);
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+	GPIOC->MODER &= ~(3 << (0 * 2));
+	GPIOC->PUPDR &= ~(3 << (0 * 2));
+	GPIOC->PUPDR |= 2 << (0 * 2);
 }
 
 void init_pc1(void) {
 	// button 1
-	__HAL_RCC_GPIOC_CLK_ENABLE();
-	pc1_init.Pin = GPIO_PIN_1;
-	pc1_init.Mode = GPIO_MODE_INPUT;
-//	pc1_init.Pull = GPIO_NOPULL;
-	pc1_init.Pull = GPIO_PULLDOWN;
-	HAL_GPIO_Init(GPIOC, &pc1_init);
-
+//	__HAL_RCC_GPIOC_CLK_ENABLE();
+//	pc1_init.Pin = GPIO_PIN_1;
+//	pc1_init.Mode = GPIO_MODE_INPUT;
+//	pc1_init.Pull = GPIO_PULLDOWN;
+//	HAL_GPIO_Init(GPIOC, &pc1_init);
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+	GPIOC->MODER &= ~(3 << (1 * 2));
+	GPIOC->PUPDR &= ~(3 << (1 * 2));
+	GPIOC->PUPDR |= 2 << (1 * 2);
 }
 
 // ==================================
@@ -102,50 +106,69 @@ void init_pa8(void) {
 void init_pa0(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-    GPIOB->MODER |= ~(3 << (0 * 2)); // set moder to input
-    GPIOB->PUPDR |= ~(3 << (0 * 2)); // set internal pull-down resistor
+    GPIOA->MODER &= ~(3 << (0 * 2)); // set moder to input
+//    GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down
+    GPIOA->PUPDR &= ~(3 << (2 * 2)); // set no pull-up or pull-down
 }
 
 void init_pa1(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-	GPIOA->MODER |= ~(3 << (1 * 2)); // set moder to input
-	GPIOA->PUPDR |= ~(3 << (1 * 2)); // no pull-up/pull-down resistor
+	GPIOA->MODER &= ~(3 << (1 * 2)); // set moder to input
+//	GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
+	GPIOA->PUPDR &= ~(3 << (2 * 2)); // set no pull-up or pull-down
 }
 
-void init_pa2(void) {
+void init_pa2(void) { // pop bumper
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-	GPIOA->MODER |= ~(3 << (2 * 2)); // set moder to input
-	GPIOA->PUPDR |= ~(3 << (2 * 2)); // no pull-up/pull-down resistor
+	GPIOA->MODER &= ~(3 << (2 * 2)); // set moder to input
+//	GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
+	GPIOA->PUPDR &= ~(3 << (2 * 2)); // set no pull-up or pull-down
+
+	SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI2_PA; // Set pa2 as EXTI2
+	EXTI->IMR |= EXTI_IMR_MR2; // enable EXTI2 interrupt
+//	EXTI->RTSR |= EXTI_RTSR_TR2; // trigger on rising edge
+	EXTI->FTSR |= EXTI_FTSR_TR2; // trigger on falling edge
+	NVIC_EnableIRQ(EXTI2_3_IRQn);
 }
 
-void init_pa3(void) {
+void init_pa3(void) { // ball lost detector
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-	GPIOA->MODER |= ~(3 << (3 * 2)); // set moder to input
-	GPIOA->PUPDR |= ~(3 << (3 * 2)); // no pull-up/pull-down resistor
+	GPIOA->MODER &= ~(3 << (3 * 2)); // set moder to input
+//	GPIOA->PUPDR |= (2 << (3 * 2)); // no pull-up/pull-down resistor
+	GPIOA->PUPDR &= ~(3 << (3 * 2)); // set no pull-up or pull-down
+
+	SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI3_PA; // set pa3 as EXTI3
+	EXTI->IMR |= EXTI_IMR_MR3; // enable EXTI3 interrupt
+//	EXTI->RTSR |= EXTI_RTSR_TR3; // trigger on rising edge
+	EXTI->FTSR |= EXTI_FTSR_TR3; // trigger on falling edge
+	NVIC_EnableIRQ(EXTI2_3_IRQn);
 }
 
 void init_pb0(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 
-	GPIOB->MODER |= ~(3 << (0 * 2)); // set moder to input
-	GPIOB->PUPDR |= ~(3 << (0 * 2)); // no pull-up/pull-down resistor
+	GPIOB->MODER &= ~(3 << (0 * 2)); // set moder to input
+//	GPIOB->PUPDR |= (2 << (0 * 2)); // set internal pull-down resistor
+	GPIOB->PUPDR &= ~(3 << (0 * 2)); // set no pull-up or pull-down
 }
 
 void init_pb1(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
 
-	GPIOB->MODER |= ~(3 << (1 * 2)); // set moder to input
-	GPIOB->PUPDR |= ~(3 << (1 * 2)); // no pull-up/pull-down resistor
+	GPIOB->MODER &= ~(3 << (1 * 2)); // set moder to input
+//	GPIOB->PUPDR |= (2 << (1 * 2)); // set internal pull-down resistor
+	GPIOB->PUPDR &= ~(3 << (1 * 2)); // set no pull-up or pull-down
 }
 
 void init_pc5(void) {
 	RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
 
-	GPIOC->MODER |= ~(3 << (5 * 2)); // set moder to input
-	GPIOC->PUPDR |= ~(3 << (5 * 2)); // no pull-up/pull-down resistor
+	GPIOC->MODER &= ~(3 << (5 * 2)); // set moder to input
+//	GPIOC->PUPDR |= (2 << (5 * 2)); // set internal pull-down resistor
+	GPIOC->PUPDR &= ~(3 << (5 * 2)); // set no pull-up or pull-down
 }
 
 // ==================================
@@ -166,18 +189,21 @@ void init_pc6(void) {
 }
 
 void init_pc7(void) {
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN; // enable clock
     GPIOC->MODER &= ~GPIO_MODER_MODER7; // reset moder value
     GPIOC->MODER |= 1 << (7 * 2); // set moder to output
     GPIOC->PUPDR |= 2 << (7 * 2); // set internal pull-down resistor
 }
 
 void init_pc8(void) {
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN; // enable clock
     GPIOC->MODER &= ~GPIO_MODER_MODER8; // reset moder value
     GPIOC->MODER |= 1 << (8 * 2); // set moder to output
     GPIOC->PUPDR |= 2 << (8 * 2); // set internal pull-down resistor
 }
 
 void init_pc9(void) {
+	RCC->AHBENR |= RCC_AHBENR_GPIOCEN; // enable clock
     GPIOC->MODER &= ~GPIO_MODER_MODER9; // reset moder value
     GPIOC->MODER |= 1 << (9 * 2); // set moder to output
     GPIOC->PUPDR |= 2 << (9 * 2); // set internal pull-down resistor
@@ -186,19 +212,17 @@ void init_pc9(void) {
 // ==================================
 
 void init_pb6(void) {
-	// THIS CODE IS FOR TESTING IF THE PIN WORKS CORRECTLY
-	// UPDATE WITH PROPER I2C CODE
-    GPIOB->MODER &= ~GPIO_MODER_MODER6; // reset moder value
-    GPIOB->MODER |= 1 << (6 * 2); // set moder to output
-    GPIOB->PUPDR |= 2 << (6 * 2); // set internal pull-down resistor
+	// usart tx
+	RCC->AHBENR |= RCC_AHBENR_GPIOBEN; // enable clock
+	GPIOB->MODER |= 2 << (6 * 2); // set input mode
+	GPIOB->AFR[0] &= ~(0xF << (6 * 4)); // set alternate function to AF0 (USART1_TX)
 }
 
 void init_pb7(void) {
-	// THIS CODE IS FOR TESTING IF THE PIN WORKS CORRECTLY
-	// UPDATE WITH PROPER I2C CODE
-    GPIOB->MODER &= ~GPIO_MODER_MODER7; // reset moder value
-    GPIOB->MODER |= 1 << (7 * 2); // set moder to output
-    GPIOB->PUPDR |= 2 << (7 * 2); // set internal pull-down resistor
+	// usart rx
+	RCC->AHBENR |= RCC_AHBENR_GPIOBEN; // enable clock
+	GPIOB->MODER |= 2 << (7 * 2); // set output mode
+	GPIOB->AFR[0] &= ~(0xF << (7 * 4));  // set alternate function to AF0 (USART1_RX)
 }
 
 // ==================================
@@ -270,7 +294,11 @@ void set_pc9(uint8_t val) {
 	set_pin(val, GPIOC, 9);
 }
 
-void init_tim1(void) {
+
+// ===============================
+
+
+void init_tim1(void) { // servo
 	RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
 
 	// init timer
@@ -281,7 +309,7 @@ void init_tim1(void) {
 	TIM1->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;   // Set PWM mode 1
 	TIM1->CCER |= TIM_CCER_CC1E;   // Enable capture/compare 1 output
     TIM1->BDTR |= TIM_BDTR_MOE;
-	TIM1->CCR1 = 500;
+	TIM1->CCR1 = SERVO_GET_BALL;
 
 	// enable timer
 	TIM1->CR1 |= TIM_CR1_CEN;
@@ -290,19 +318,6 @@ void init_tim1(void) {
 
 void init_tim3(uint32_t dma_srcAddr) {
 	// init tim3 pwm and dma for output on pb4
-
-//	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-//
-//	TIM3->PSC = 4800-1;
-//	TIM3->ARR = 15000-1;
-//
-//	TIM3->DIER |= TIM_DIER_UIE;
-//	TIM3->DIER |= TIM_DIER_UDE;
-//
-//	TIM3->CR1 |= TIM_CR1_CEN;
-//	NVIC_SetPriority(TIM3_IRQn, 0);
-//	NVIC_EnableIRQ(TIM3_IRQn);
-
 
 	RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
 
@@ -314,7 +329,6 @@ void init_tim3(uint32_t dma_srcAddr) {
 	TIM3->BDTR |= TIM_BDTR_MOE;
 	TIM3->CCR1 = 0;
 
-//	TIM3->DIER |= TIM_DIER_UIE;
 	TIM3->DIER |= TIM_DIER_UDE;
 
 	// set tim3 dmr_dba to tim3_cr1 (default value)
@@ -322,12 +336,105 @@ void init_tim3(uint32_t dma_srcAddr) {
 
 	TIM3->CR1 |= TIM_CR1_CEN;
 	NVIC_SetPriority(TIM3_IRQn, 0);
-	NVIC_EnableIRQ(TIM3_IRQn);
+//	NVIC_EnableIRQ(TIM3_IRQn);
 
 }
 
-extern uint16_t ws_io_buffer[];
 
+void init_tim2(int n) {
+
+	// Configure timer 2 so that it invokes the Update interrupt
+	// every n microseconds.  To do so, set the prescaler to divide
+	// by 48.  Then the CNT will count microseconds up to the ARR value.
+	// Basically ARR = n-1
+	// Set the ARPE bit in the CR1 so that the timer waits until the next
+	// update before changing the effective ARR value.
+	// Call NVIC_SetPriority() to set a low priority for Timer 2 interrupt.
+	// See the lab 6 text to understand how to do so.
+
+    RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
+    TIM2->PSC = 48;
+    TIM2->ARR = n;
+    TIM2->CR2 |= TIM_CR2_MMS_1;
+    TIM2->CR1 |= TIM_CR1_ARPE;
+    TIM2->DIER |= TIM_DIER_UIE;
+    TIM2->CR1 |= TIM_CR1_CEN;
+    NVIC->ISER[0] |= 1 << TIM2_IRQn;
+}
+
+
+void init_tim6(void)
+{
+	// Initialize Timer 6 so that it calls TIM6_DAC_IRQHandler
+	// at exactly RATE times per second.  You'll need to select
+	// a PSC value and then do some math on the system clock rate
+	// to determine the value to set for ARR.  Set it to trigger
+	// the DAC by enabling the Update Trigger in the CR2 MMS field.
+    RCC->APB1ENR |= RCC_APB1ENR_TIM6EN;
+    TIM6->PSC = 0;
+    TIM6->ARR = 48000000/RATE-1;
+    TIM6->CR2 |= TIM_CR2_MMS_1;
+    TIM6->DIER |= TIM_DIER_UIE;
+    TIM6->CR1 |= TIM_CR1_CEN;
+    NVIC->ISER[0] |= 1 << TIM6_DAC_IRQn;
+}
+
+void init_tim14(void) {
+	RCC->APB1ENR |= RCC_APB1ENR_TIM14EN;
+
+	TIM14->PSC = 1000-1;
+	TIM14->ARR = 1000-1;
+
+	TIM14->DIER |= TIM_DIER_UIE;
+
+	TIM14->CR1 |= TIM_CR1_CEN;
+	NVIC_EnableIRQ(TIM14_IRQn);
+}
+
+void init_tim15(void) {
+	RCC->APB2ENR |= RCC_APB2ENR_TIM15EN;
+
+	// timer freq = stm clock freq (48MHz) / ((ARR + 1) * (PSC + 1))
+	// 48Mhz / (1000 * 500) = 96hz
+
+	TIM15->PSC = 1000-1;
+	TIM15->ARR = 500-1;
+
+	TIM15->DIER |= TIM_DIER_UIE;
+	TIM15->CR1 |= TIM_CR1_CEN;
+	NVIC_EnableIRQ(TIM15_IRQn);
+}
+
+void init_tim16(void) {
+	RCC->APB2ENR |= RCC_APB2ENR_TIM16EN;
+
+	TIM16->PSC = 1000-1;
+	TIM16->ARR = 500-1;
+
+	TIM16->DIER |= TIM_DIER_UIE;
+	TIM16->CR1 |= TIM_CR1_CEN;
+	NVIC_EnableIRQ(TIM16_IRQn);
+}
+
+void init_tim17(void) {
+	RCC->APB2ENR |= RCC_APB2ENR_TIM17EN;
+	TIM17->PSC = 48-1;
+	TIM17->ARR = 2500-1;
+
+	TIM17->DIER |= TIM_DIER_UIE;
+	TIM17->CR1 |= TIM_CR1_CEN;
+	NVIC_EnableIRQ(TIM17_IRQn);
+}
+
+void enable_timer(TIM_TypeDef *timer) {
+	timer->CR1 |= TIM_CR1_CEN;
+}
+
+void disable_timer(TIM_TypeDef *timer) {
+	timer->CR1 &= ~TIM_CR1_CEN;
+}
+
+extern uint16_t ws_io_buffer[];
 void init_dma1_ch3(uint32_t memAddr, uint16_t memAddrLen, uint32_t periphAddr) {
 	// init dma1 for use with tim1 ch1
 
@@ -366,181 +473,24 @@ void disable_dma1_ch3() {
 }
 
 
-void init_i2c_p1(void) {
-    RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
-
-    GPIOB->MODER |= 2<<(2*6) | 2<<(2*7);
-    GPIOB->AFR[0] |= 1<<(4*6) | 1<<(4*7);
-
-    RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
-
-    I2C1->CR1 &= ~I2C_CR1_PE;       // Disable PE bit before changing things
-    I2C1->CR1 &= ~I2C_CR1_ANFOFF;   // Turn off Analog noise filter
-    I2C1->CR1 &= ~I2C_CR1_ERRIE;    // Disable Error interrupt
-    I2C1->CR1 &= ~I2C_CR1_NOSTRETCH;    // Enable clock stretching
-
-    // Timingr register
-    I2C1->TIMINGR = 0;
-    I2C1->TIMINGR &= ~I2C_TIMINGR_PRESC; // Clear prescaler
-    I2C1->TIMINGR |= 0 << 28;           // Set prescaler to 0
-    I2C1->TIMINGR |= 3 << 20;           // SCLDEL
-    I2C1->TIMINGR |= 1 << 16;           // SCADEL
-    I2C1->TIMINGR |= 3 << 8;            // SCLH
-
-    I2C1->OAR1 |= I2C_OAR1_OA1EN;      // Enable own address 1
-
-    I2C1->OAR1 = I2C_OAR1_OA1EN | (P1_I2C_ADDRESS << 1);  // Set 7-bit own address to P1_I2C_ADDRESS
-
-    I2C1->OAR2 &= ~I2C_OAR2_OA2EN;      // Disable own address 2
-
-    I2C1->CR2 &= ~I2C_CR2_ADD10;        // 0 = 7-bit mode; 1 = 10 bit
-    I2C1->CR2 |= I2C_CR2_AUTOEND;       // Enable the auto end
-    //I2C1->CR2 |= I2C_CR2_NACK;
-
-    I2C1->CR1 |= I2C_CR1_PE;    // Enable I2C1
-
+void init_dac(void)
+{
+	// Initialize the DAC so that it can output analog samples
+	// on PA4.  Configure it to be triggered by TIM6 TRGO.
+    RCC->APB1ENR |= RCC_APB1ENR_DACEN;
+    RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+    GPIOA->MODER |= 0x300;
+    DAC->CR &= ~(DAC_CR_TSEL1_0 | DAC_CR_TSEL1_1 | DAC_CR_TSEL1_2);
+    DAC->CR |= DAC_CR_TEN1;
+    DAC->CR |= DAC_CR_EN1;
 }
 
-void init_i2c_p2(void) {
-        RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
+// =========================
 
-        GPIOB->MODER |= 2<<(2*6) | 2<<(2*7);
-        GPIOB->AFR[0] |= 1<<(4*6) | 1<<(4*7);
-
-        RCC->APB1ENR |= RCC_APB1ENR_I2C1EN;
-
-        I2C1->CR1 &= ~I2C_CR1_PE;       // Disable PE bit before changing things
-        I2C1->CR1 &= ~I2C_CR1_ANFOFF;   // Turn off Analog noise filter
-        I2C1->CR1 &= ~I2C_CR1_ERRIE;    // Disable Error interrupt
-        I2C1->CR1 &= ~I2C_CR1_NOSTRETCH;    // Enable clock stretching
-
-        // Timingr register
-        I2C1->TIMINGR = 0;
-        I2C1->TIMINGR &= ~I2C_TIMINGR_PRESC; // Clear prescaler
-        I2C1->TIMINGR |= 0 << 28;           // Set prescaler to 0
-        I2C1->TIMINGR |= 3 << 20;           // SCLDEL
-        I2C1->TIMINGR |= 1 << 16;           // SCADEL
-        I2C1->TIMINGR |= 3 << 8;            // SCLH
-
-        I2C1->OAR1 |= I2C_OAR1_OA1EN;      // Enable own address 1
-
-        I2C1->OAR1 = I2C_OAR1_OA1EN | (P2_I2C_ADDRESS << 1);  // Set 7-bit own address to P2_I2C_ADDRESS
-
-        I2C1->OAR2 &= ~I2C_OAR2_OA2EN;      // Disable own address 2
-
-        I2C1->CR2 &= ~I2C_CR2_ADD10;        // 0 = 7-bit mode; 1 = 10 bit
-        I2C1->CR2 |= I2C_CR2_AUTOEND;       // Enable the auto end
-        //I2C1->CR2 |= I2C_CR2_NACK;
-
-        I2C1->CR1 |= I2C_CR1_PE;    // Enable I2C1
+void init_usart(void) {
+	// already auto generated by STM32CubeIDE
 }
 
-
-void i2c_waitidle_send(void) {
-    while ((I2C1->ISR & I2C_ISR_BUSY) == I2C_ISR_BUSY);
-}
-
-void i2c_waitidle_recv(void) {
-    while ((I2C1->ISR & I2C_ISR_BUSY) != I2C_ISR_BUSY);
-}
-/*
-void i2c_start_send(uint32_t devaddr, uint8_t size, uint8_t dir) {
-    uint32_t tmpreg = I2C1->CR2;
-    tmpreg &= ~();
-
-    uint32_t tmpreg = I2C1->CR2;
-    tmpreg &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND |I2C_CR2_RD_WRN | I2C_CR2_START | I2C_CR2_STOP);
-    if (dir == 1) {
-        tmpreg |= I2C_CR2_RD_WRN;
-    } else {
-        tmpreg &= ~I2C_CR2_RD_WRN;
-        tmpreg |= ((devaddr<<1) & I2C_CR2_SADD) | ((size << 16) & I2C_CR2_NBYTES);
-        tmpreg |= I2C_CR2_START;
-        I2C1->CR2 = tmpreg;
-    }
-}
-
-void i2c_start_recv(uint32_t devaddr, uint8_t size, uint8_t dir) {
-    uint32_t tmpreg = I2C1->CR2;
-    tmpreg &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND |I2C_CR2_RD_WRN | I2C_CR2_START | I2C_CR2_STOP);
-    if (dir == 1) {
-        tmpreg |= I2C_CR2_RD_WRN;
-    } else {
-        tmpreg &= ~I2C_CR2_RD_WRN;
-        tmpreg |= ((devaddr<<1) & I2C_CR2_SADD) | ((size << 16) & I2C_CR2_NBYTES);
-        tmpreg |= I2C_CR2_START;
-        I2C1->CR2 = tmpreg;
-    }
-}
-
-void i2c_stop(void) {
-    if (I2C1->ISR & I2C_ISR_STOPF)
-        return;
-    I2C1->CR2 |= I2C_CR2_STOP;
-    while( (I2C1->ISR & I2C_ISR_STOPF) == 0);
-    I2C1->ICR |= I2C_ICR_STOPCF;
-}
-
-int i2c_checknack(void) {
-    return ((I2C1->ISR >> 4) & 1);
-}
-
-void i2c_clearnack(void) {
-    I2C1->ICR |= 0x10;
-}
-
-int i2c_senddata(uint8_t devaddr, const void *data, uint8_t size) {
-    int i;
-    if (size <= 0 || data == 0) return -1;
-    uint8_t *udata = (uint8_t*)data;
-    i2c_waitidle_send();
-    i2c_start(devaddr, size, 0);
-    for (i=0; i<size; i++) {
-        int count = 0;
-        while ((I2C1->ISR & I2C_ISR_TXIS) == 0) {
-            count += 1;
-            if (count > 1000000) return -1;
-            if (i2c_checknack()) { i2c_clearnack(); i2c_stop(); return -1;}
-        }
-        I2C1->TXDR = udata[i] & I2C_TXDR_TXDATA;
-    }
-    while((I2C1->ISR & I2C_ISR_TC) == 0 && (I2C1->ISR & I2C_ISR_NACKF) == 0);
-
-    if ((I2C1->ISR & I2C_ISR_NACKF) != 0)
-        return -1;
-    i2c_stop();
-    return 0;
-}
-
-int i2c_recvdata(uint8_t devaddr, void *data, uint8_t size) {
-    int i;
-    if (size <= 0 || data == 0) return -1;
-    uint8_t *udata = (uint8_t*)data;
-    i2c_waitidle();
-    i2c_start(devaddr, size, 1);
-
-    for (i=0; i<size;i++) {
-        int count = 0;
-        while ((I2C1->ISR & I2C_ISR_RXNE) == 0) {
-            count += 1;
-            if (count > 1000000) return -2;
-            if ( i2c_checknack() ){
-                i2c_clearnack();
-                i2c_stop();
-                return -3;
-            }
-        }
-        udata[i] = I2C1->RXDR;
-    }
-    while ((I2C1->ISR & I2C_ISR_TC) == 0 && (I2C1->ISR & I2C_ISR_NACKF) == 0);
-    if ((I2C1->ISR & I2C_ISR_NACKF) != 0) {
-        return -1;
-    }
-    i2c_stop();
-    return 0;
-}
-
-*/
 
 void hard_reset(void) {
 	NVIC_SystemReset();

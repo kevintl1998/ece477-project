@@ -15,17 +15,17 @@
 // the step size used for traversing a wavetable of size N
 // at a rate of RATE to produce tones of various doublings
 // and halvings of 440 Hz.  (The "A" above middle "C".)
-#define A14    ((13.75   * N/RATE) * (1<<16)) /* A0 */
-#define A27    ((27.5    * N/RATE) * (1<<16)) /* A1 */
-#define A55    ((55.0    * N/RATE) * (1<<16)) /* A2 */
-#define A110   ((110.0   * N/RATE) * (1<<16)) /* A3 */
-#define A220   ((220.0   * N/RATE) * (1<<16)) /* A4 */
-#define A440   ((440.0   * N/RATE) * (1<<16)) /* A5 */
-#define A880   ((880.0   * N/RATE) * (1<<16)) /* A6 */
-#define A1760  ((1760.0  * N/RATE) * (1<<16)) /* A7 */
-#define A3520  ((3520.0  * N/RATE) * (1<<16)) /* A8 */
-#define A7040  ((7040.0  * N/RATE) * (1<<16)) /* A9 */
-#define A14080 ((14080.0 * N/RATE) * (1<<16)) /* A10 */
+#define A14    ((13.75   * WAVETABLE_SIZE/RATE) * (1<<16)) /* A0 */
+#define A27    ((27.5    * WAVETABLE_SIZE/RATE) * (1<<16)) /* A1 */
+#define A55    ((55.0    * WAVETABLE_SIZE/RATE) * (1<<16)) /* A2 */
+#define A110   ((110.0   * WAVETABLE_SIZE/RATE) * (1<<16)) /* A3 */
+#define A220   ((220.0   * WAVETABLE_SIZE/RATE) * (1<<16)) /* A4 */
+#define A440   ((440.0   * WAVETABLE_SIZE/RATE) * (1<<16)) /* A5 */
+#define A880   ((880.0   * WAVETABLE_SIZE/RATE) * (1<<16)) /* A6 */
+#define A1760  ((1760.0  * WAVETABLE_SIZE/RATE) * (1<<16)) /* A7 */
+#define A3520  ((3520.0  * WAVETABLE_SIZE/RATE) * (1<<16)) /* A8 */
+#define A7040  ((7040.0  * WAVETABLE_SIZE/RATE) * (1<<16)) /* A9 */
+#define A14080 ((14080.0 * WAVETABLE_SIZE/RATE) * (1<<16)) /* A10 */
 
 
 // A table of steps for each of 128 notes.

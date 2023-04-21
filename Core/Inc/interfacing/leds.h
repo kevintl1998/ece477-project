@@ -7,6 +7,8 @@
 
 extern int WSLED_QueueAdd(WSLED_Queue* q, uint8_t r, uint8_t g, uint8_t b, uint32_t hold_cycles);
 
-void init_leds();
+void init_leds(void);
+void init_led_timer(void);
+
 
 #endif

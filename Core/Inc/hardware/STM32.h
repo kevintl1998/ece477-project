@@ -2,6 +2,10 @@
 #define STM32_H
 
 #include <stdint.h>
+#include "stm32f091xc.h"
+
+#include "game.h"
+#include "hardware/audio/midiplay.h"
 
 // GPIO functions
 
@@ -19,7 +23,6 @@ void init_pc4(void); // will be used for the third button to help control the ma
 void init_pa5(void);
 void init_pa6(void);
 void init_pa7(void);
-
 
 // solenoid pins
 void init_pb13(void);
@@ -39,8 +42,7 @@ void init_pb4(void);
 void init_pa8(void);
 
 //switches
-// pulled up by external 3v
-// high=open | low=closed
+// pulled up by internal resistor
 void init_pa0(void);
 void init_pa1(void);
 void init_pa2(void);
@@ -49,11 +51,19 @@ void init_pb0(void);
 void init_pb1(void);
 void init_pc5(void);
 
+// usart comms between mcu
+void init_pb6(void); // tx
+void init_pb7(void); // rx
+
 // pin poll/set functions
+
+// button poll functions
 int poll_pc0(void);
 int poll_pc1(void);
 int poll_pc4(void);
 
+// switch poll functions:
+// returns 1 if open, 0 if closed
 int poll_pa0(void);
 int poll_pa1(void);
 int poll_pa2(void);
@@ -61,6 +71,9 @@ int poll_pa3(void);
 int poll_pb0(void);
 int poll_pb1(void);
 int poll_pc5(void);
+
+// poll mcu comms
+int poll_pb6(void);
 
 void set_pb12(uint8_t val);
 void set_pb13(uint8_t val);
@@ -72,29 +85,28 @@ void set_pc9(uint8_t val);
 // timer functions
 void init_tim1(void);
 void init_tim3(uint32_t dma_srcAddr);
+void init_tim2(int n);
+void init_tim6(void);
+void init_tim14(void);
+void init_tim15(void);
+void init_tim16(void);
+void init_tim17(void);
+
+void enable_timer(TIM_TypeDef *timer);
+void disable_timer(TIM_TypeDef *timer);
 
 // dma functions
 void init_dma1_ch3(uint32_t memAddr, uint16_t memAddrLen, uint32_t periphAddr);
 void enable_dma1_ch3();
 void disable_dma1_ch3();
 
-// I2C comm functions
+// init dac
+void init_dac(void);
 
-void init_i2c_p2(void);
-void init_i2c_p1(void);
+// usart functions
+void init_usart(void);
 
-void i2c_waitidle_send(void);
-void i2c_waitidle_recv(void);
-
-void i2c_start_send(uint32_t devaddr, uint8_t size, uint8_t dir);
-void i2c_start_recv(uint32_t devaddr, uint8_t size, uint8_t dir);
-
-void i2c_stop(void);
-int i2c_checknack(void);
-void i2c_clearnack(void);
-int i2c_senddata(uint8_t devaddr, const void *data, uint8_t size);
-int i2c_recvdata(uint8_t devaddr, void *data, uint8_t size);
-
+// other
 void hard_reset(void);
 
 #endif

@@ -1,10 +1,14 @@
 #ifndef BUTTONS_H
 #define BUTTONS_H
 
-void init_left_button();
-void init_right_button();
-void init_select_button();
+void init_LB();
+void init_RB();
+void init_Select();
 
-void init_button_poll_timer();
+int poll_LB();
+int poll_RB();
+int poll_Select();
+
+void init_button_update_timer();
 
 #endif

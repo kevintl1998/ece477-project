@@ -1,13 +1,13 @@
-#if !defined(__MIDIPLAY_H__)
+#ifndef __MIDIPLAY_H__
 #define __MIDIPLAY_H__
 
 // The DAC rate
 #define RATE 20000
 // The wavetable size
-#define N 1000
+#define WAVETABLE_SIZE 1000
 
 extern const int step[128];
-extern short int wavetable[N];
+extern short int wavetable[WAVETABLE_SIZE];
 
 void init_wavetable_sine(void);     // sine wave
 void init_wavetable_sawtooth(void); // sawtooth wave

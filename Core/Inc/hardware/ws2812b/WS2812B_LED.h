@@ -10,17 +10,17 @@
 #define LOGIC0 20
 
 // 50 is the minimum, the extra 10 is a just in case
-#define RESET_SIZE 60
+#define RESET_SIZE 55
 // # of bits needed to represent a single ws2812 led
 #define LED_DATA_SIZE 24
 // # of leds in series
-#define WS_LED_COUNT 2
+#define WS_LED_COUNT 8
 
 // buffer size to contain all the bits currently being sent to the LEDs
 #define WS_BUFFER_SIZE ((LED_DATA_SIZE + RESET_SIZE) * WS_LED_COUNT)
 
 
-#define WS_QUEUE_LENGTH 10
+#define WS_QUEUE_LENGTH 0
 
 
 // declared in WS2812B_LED.c
@@ -34,6 +34,7 @@ void clear_ws_led_io_buffer(uint16_t* IObuffer, uint32_t led_num);
 void init_ws2812b_leds();
 
 int add_to_ws_queue(uint32_t led_num, uint8_t r, uint8_t g, uint8_t b, uint32_t hold_cycles);
+void set_led_color(uint32_t led_num, uint8_t r, uint8_t g, uint8_t b);
 
 // function to be called by DMA transmission complete interrupt
 void ws_update_buffer();

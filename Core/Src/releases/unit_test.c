@@ -46,11 +46,12 @@ int unit_test(void) {
 //	test_i2c();
     if (DEVICE_ID == PLAYER1) {
         // test functions for p1
-    	test_scoreboard();
+//    	test_scoreboard();
 //		test_servo();
-//    	test_leds();
+    	test_leds();
 //    	test_usart();
 //		test_audio();
+//    	test_switches();
     } else if(DEVICE_ID == PLAYER2) {
         // test functions for p2
 //    	test_scoreboard();
@@ -176,9 +177,9 @@ void test_servo(void) {
 	// SERVO 1
 //	uint16_t load_ball = 1600;
 //	uint16_t get_ball = 2450;
-	// SERVO 2
-	uint16_t load_ball = 1500;
-	uint16_t get_ball = 2425;
+// SERVO 2 (cum servo)
+uint16_t load_ball = 1500;
+uint16_t get_ball = 2300;
 
 
 	// init buttons
@@ -293,8 +294,8 @@ void test_i2c(void) {
 }
 
 void test_switches(void) {
-	// test switches by togling the test led when any of the switches are pulled low
-
+	// test switches by toggling the test led when any of the switches are pulled low
+	init_tft_lcd();
 	// init switches
 	init_pa0();
 	init_pa1();
@@ -307,13 +308,30 @@ void test_switches(void) {
 	// init gpio test led
 	init_pb12();
 
+	uint8_t t;
+	uint32_t t1;
+	uint32_t t2;
+	char t1_str[10];
+	char t2_str[10];
 	while(1) {
-		set_pb12(!poll_pa0() || !poll_pa1() || !poll_pa2() || !poll_pa3() || !poll_pb0() || !poll_pb1() || !poll_pc5());
+		t = poll_pa3();
+		if(t == 0) {
+			t1++;
+			itoa(t1, t1_str, 10);
+			LCD_DrawString(10, 10, WHITE, BLACK, t1_str, 16, 0);
+
+		} else {
+			t2++;
+			itoa(t2, t2_str, 10);
+			LCD_DrawString(10, 40, WHITE, BLACK, t2_str, 16, 0);
+		}
+//		set_pb12(!poll_pa0() || !poll_pa1() || !poll_pa2() || !poll_pa3() || !poll_pb0() || !poll_pb1() || !poll_pc5());
 //		if(!poll_pa0() || !poll_pa1() || !poll_pa2() || !poll_pa3() || !poll_pb0() || !poll_pb1() || !poll_pc5()) {
 //			set_pb12(1);
 //		} else {
 //			set_pb12(0);
 //		}
+//		nano_wait(ONE_MILLION * 2.5);
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

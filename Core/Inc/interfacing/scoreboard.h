@@ -71,12 +71,12 @@ void clear_screen(void);
 
 void start_menu_render(void);
 void start_menu_options_render(void);
-void score_display_render(GameState* gs);
-void gameover_render(GameState* gs);
+void score_display_render(volatile GameState* gs);
+void gameover_render(volatile GameState* gs);
 
 void start_menu_update();
 void start_menu_options_update();
-void score_display_update(GameState* gs);
+void score_display_update(volatile GameState* gs);
 
 
 #endif

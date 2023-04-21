@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "stm32f091xc.h"
 
+#include "game.h"
 #include "hardware/audio/midiplay.h"
 
 // GPIO functions

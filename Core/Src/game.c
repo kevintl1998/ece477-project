@@ -7,6 +7,7 @@
 
 #include "hardware/stm32.h"
 #include "hardware/TFT_LCD_lib.h"
+#include "hardware/ws2812b/WS2812B_LED.h"
 
 #include "interfacing/scoreboard.h"
 #include "interfacing/buttons.h"
@@ -18,7 +19,7 @@
 
 // game structs
 volatile GameState __gameState;
-GameState* gameState = &__gameState;
+volatile GameState* gameState = &__gameState;
 
 // list of all life options
 uint8_t lives[] = {LIFE_COUNT_1, LIFE_COUNT_2, LIFE_COUNT_3, LIFE_COUNT_4};
@@ -42,6 +43,9 @@ void init_hardware(void) {
 	// leds
 	init_leds();
 	init_led_timer();
+	for(int i = 0; i < WS_LED_COUNT; i++) {
+		set_led_color(i, 0, 0, 255);
+	}
 
 	// audio
 
@@ -62,6 +66,8 @@ void init_hardware(void) {
 	init_obstacles();
 
 	// servo
+	init_pa8();
+	init_tim1();
 
 	// mcu communication
 	init_comms();
@@ -80,10 +86,10 @@ void init_game(void) {
 	// enable necessary peripherals for menu selection in gameState
 	gameState->servo_enabled = 0;
 	gameState->switches_enabled = 0;
-	gameState->solenoids_enabled = 1;
+	gameState->solenoids_enabled = 0;
 
 	gameState->buttons_enabled = 1;
-//	gameState->leds_enabled = 1;
+	gameState->leds_enabled = 0;
 //	gameState->audio_enabled = 1;
 }
 
@@ -109,6 +115,7 @@ int run_game(void) {
 	}
 #endif
 
+
 	debug_print_options();
 
 	wait_for_ready(1,0,0);
@@ -117,6 +124,12 @@ int run_game(void) {
 	gameState->servo_enabled = 1;
 	gameState->switches_enabled = 1;
 	gameState->solenoids_enabled = 1;
+	gameState->leds_enabled = 1;
+
+	 // change to device id == if multiplayer can work
+	if(SERVO_TYPE == BROKE_SERVO) {
+		init_audio();
+	}
 
 	// game start
 	score_display_render(gameState);
@@ -127,7 +140,7 @@ int run_game(void) {
 
 	// main game loop
 	uint32_t prev_score = 0;
-	uint32_t prev_lives = gameState->lives_left;
+	uint32_t prev_lives = 0;
 	while(1) {
 		// rendering will be done in this while loop
 		// update score on scoreboard
@@ -165,6 +178,7 @@ int run_game(void) {
 	gameState->servo_enabled = 0;
 	gameState->switches_enabled = 0;
 	gameState->solenoids_enabled = 0;
+	gameState->leds_enabled = 0;
 
 
 	if(gameState->gameMode == GAMEMODE_MULTIPLAYER) {

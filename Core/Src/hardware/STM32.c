@@ -119,20 +119,32 @@ void init_pa1(void) {
 	GPIOA->PUPDR &= ~(3 << (2 * 2)); // set no pull-up or pull-down
 }
 
-void init_pa2(void) {
+void init_pa2(void) { // pop bumper
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
 	GPIOA->MODER &= ~(3 << (2 * 2)); // set moder to input
 //	GPIOA->PUPDR |= (2 << (2 * 2)); // set internal pull-down resistor
 	GPIOA->PUPDR &= ~(3 << (2 * 2)); // set no pull-up or pull-down
+
+	SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI2_PA; // Set pa2 as EXTI2
+	EXTI->IMR |= EXTI_IMR_MR2; // enable EXTI2 interrupt
+//	EXTI->RTSR |= EXTI_RTSR_TR2; // trigger on rising edge
+	EXTI->FTSR |= EXTI_FTSR_TR2; // trigger on falling edge
+	NVIC_EnableIRQ(EXTI2_3_IRQn);
 }
 
-void init_pa3(void) {
+void init_pa3(void) { // ball lost detector
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
 	GPIOA->MODER &= ~(3 << (3 * 2)); // set moder to input
 //	GPIOA->PUPDR |= (2 << (3 * 2)); // no pull-up/pull-down resistor
 	GPIOA->PUPDR &= ~(3 << (3 * 2)); // set no pull-up or pull-down
+
+	SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI3_PA; // set pa3 as EXTI3
+	EXTI->IMR |= EXTI_IMR_MR3; // enable EXTI3 interrupt
+//	EXTI->RTSR |= EXTI_RTSR_TR3; // trigger on rising edge
+	EXTI->FTSR |= EXTI_FTSR_TR3; // trigger on falling edge
+	NVIC_EnableIRQ(EXTI2_3_IRQn);
 }
 
 void init_pb0(void) {
@@ -286,7 +298,7 @@ void set_pc9(uint8_t val) {
 // ===============================
 
 
-void init_tim1(void) {
+void init_tim1(void) { // servo
 	RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
 
 	// init timer
@@ -297,7 +309,7 @@ void init_tim1(void) {
 	TIM1->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;   // Set PWM mode 1
 	TIM1->CCER |= TIM_CCER_CC1E;   // Enable capture/compare 1 output
     TIM1->BDTR |= TIM_BDTR_MOE;
-	TIM1->CCR1 = 0;
+	TIM1->CCR1 = SERVO_GET_BALL;
 
 	// enable timer
 	TIM1->CR1 |= TIM_CR1_CEN;

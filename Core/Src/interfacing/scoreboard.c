@@ -54,7 +54,7 @@ void start_menu_options_render(void) {
 	LCD_DrawPicture(LIVES_OPTION_1_X, LIVES_SELECTOR_Y, (const Picture*)&selector_arrow);
 }
 
-void score_display_render(GameState* gs) {
+void score_display_render(volatile GameState* gs) {
 	clear_screen();
 
 	LCD_DrawPicture(SCORE_LOGO_X, SCORE_LOGO_Y, (const Picture*)&logo_small);
@@ -65,7 +65,7 @@ void score_display_render(GameState* gs) {
 	LCD_DrawPicture(LIVES_START_X, LIVES_Y, (const Picture*)red_nums[0]);
 }
 
-void gameover_render(GameState* gs) {
+void gameover_render(volatile GameState* gs) {
 	if(gs->gameMode == GAMEMODE_MULTIPLAYER) {
 		// display multiplayer game end screen
 		// display winner or loser
@@ -80,11 +80,11 @@ void gameover_render(GameState* gs) {
 		// display your score and opponents score
 	} else {
 		// display singleplayer game end screen
-		LCD_DrawString(0,0,WHITE,BLACK,"insert score here", 16,0);
+		LCD_DrawString(0,0,WHITE,BLACK,"Game over!", 16,0);
 	}
 }
 
-void start_menu_update(GameState* gs) {
+void start_menu_update(volatile GameState* gs) {
 	if(gs->gameMode) {
 		LCD_DrawFillRectangle(GAMEMODE_SELECTOR_SINGLE_X, GAMEMODE_SELECTOR_Y, GAMEMODE_SELECTOR_SINGLE_X + selector_arrow.width, GAMEMODE_SELECTOR_Y + selector_arrow.height, BLACK);
 		LCD_DrawPicture(GAMEMODE_SELECTOR_MULTI_X, GAMEMODE_SELECTOR_Y, (const Picture*)&selector_arrow);
@@ -95,7 +95,7 @@ void start_menu_update(GameState* gs) {
 	}
 }
 
-void start_menu_options_update(GameState* gs) {
+void start_menu_options_update(volatile GameState* gs) {
 	for(int i = 0; i < 4; i++) {
 		if(gs->lives_option == i) {
 			LCD_DrawPicture(selector_x[i], LIVES_SELECTOR_Y, (const Picture*)&selector_arrow);
@@ -117,7 +117,7 @@ void display_digits(uint32_t number, const Picture*(* numPic_arr), uint32_t star
     LCD_DrawFillRectangle(start_x, y, SCOREBOARD_WIDTH, y + numPic_arr[0]->height, BLACK);
 }
 
-void score_display_update(GameState* gs) {
+void score_display_update(volatile GameState* gs) {
     // update score
     display_digits(gs->score, blue_nums, SCORE_START_X, SCORE_Y);
 

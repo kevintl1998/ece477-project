@@ -31,6 +31,8 @@ typedef struct voice_struct{
 extern voice_struct voice[];
 extern MIDI_Player *mp;
 
+void init_audio(void);
+
 void note_off(int time, int chan, int key, int velo);
 void note_on(int time, int chan, int key, int velo);
 void set_tempo(int time, int value, const MIDI_Header *hdr);

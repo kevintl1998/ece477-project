@@ -34,6 +34,16 @@ struct {
         {15368,91,0x00}, {15460,93,0x00},
 };
 
+void init_audio(void) {
+    init_wavetable_hybrid2();
+    init_dac();
+    init_tim6();
+    mp = midi_init(midifile);
+    // The default rate for a MIDI file is 2 beats per second
+    // with 48 ticks per beat.  That's 500000/48 microseconds.
+    init_tim2(10417);
+}
+
 // Find the voice current playing a note, and turn it off.
 void note_off(int time, int chan, int key, int velo)
 {
